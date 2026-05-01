@@ -1,0 +1,5 @@
+# MkDocs 사이트 빌드용 — GitHub Actions 가 이 목록만 설치합니다.
+# 노트북 실행에 필요한 라이브러리(LangChain·Ragas 등) 는 여기에 포함하지 않습니다.
+mkdocs==1.6.1
+mkdocs-material>=9.5,<10
+pymdown-extensions>=10.7

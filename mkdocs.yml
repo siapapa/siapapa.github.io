@@ -1,0 +1,124 @@
+site_name: AI 기반 SQL 분석 에이전트 구축
+site_description: 24시간 집중 강의 — PostgreSQL · LlamaIndex · Vanna · LangChain · LangGraph · Ragas
+site_author: Jaeyoo
+# GitHub Pages 게시 URL — 사용자명/저장소명 확정 시 교체.
+# 예) https://<github-username>.github.io/<repo-name>/
+site_url: https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/
+
+# 우상단 GitHub 아이콘 링크 — 저장소가 만들어지면 이 두 줄도 교체.
+repo_name: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
+repo_url: https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
+
+theme:
+  name: material
+  language: ko
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: 다크 모드로 전환
+    - scheme: slate
+      primary: indigo
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: 라이트 모드로 전환
+  font:
+    text: Noto Sans KR
+    code: JetBrains Mono
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+  icon:
+    logo: material/robot-happy-outline
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+plugins:
+  - search:
+      lang: en
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/colab-links.js
+
+nav:
+  - Home: index.md
+  - 사전 준비: setup.md
+  - "Day 1 — SQL · RAG · 프로젝트 (1~8H)":
+    - day1/index.md
+    - "01H. OT & 전체 데모": day1/01-ot-demo.md
+    - "02H. PostgreSQL 기초": day1/02-postgres-basics.md
+    - "03H. 집계 · 조인 · CTE": day1/03-sql-advanced.md
+    - "04H. Schema Intelligence": day1/04-schema-intelligence.md
+    - "05H. LlamaIndex 개론": day1/05-llamaindex-intro.md
+    - "06H. 임베딩 + ChromaDB": day1/06-embedding-chromadb.md
+    - "07H. Text-to-SQL 맛보기": day1/07-text-to-sql.md
+    - "08H. 프로젝트 브리핑": day1/08-project-briefing.md
+  - "Day 2 — Text-to-SQL 상담사 (9~12H)":
+    - day2/index.md
+    - "09H. 제안서 피어리뷰": day2/09-peer-review.md
+    - "10H. Text-to-SQL 심화": day2/10-text-to-sql-advanced.md
+    - "11H. 멀티턴 상담사": day2/11-multiturn-chatbot.md
+    - "12H. Gradio UI": day2/12-gradio-ui.md
+  - "Day 3 — Vanna · LangChain · LangGraph (13~20H)":
+    - day3/index.md
+    - "13H. Vanna.ai 구조": day3/13-vanna-intro.md
+    - "14H. Vanna 자가학습": day3/14-vanna-training.md
+    - "15H. LangChain & LCEL": day3/15-langchain-lcel.md
+    - "16H. LCEL RAG 체인": day3/16-lcel-rag-chain.md
+    - "17H. Advanced RAG 쿼리변환": day3/17-advanced-rag-query.md
+    - "18H. Advanced RAG 검색고도화": day3/18-advanced-rag-retrieval.md
+    - "19H. LangGraph 개념": day3/19-langgraph-concept.md
+    - "20H. SQL 에이전트 빌드": day3/20-sql-agent-build.md
+  - "Day 4 — 평가 · 발표 (21~24H)":
+    - day4/index.md
+    - "21H. LangSmith 트레이싱": day4/21-langsmith.md
+    - "22H. Ragas 정량 평가": day4/22-ragas-eval.md
+    - "23H. 최종 튜닝 & 리허설": day4/23-final-tuning.md
+    - "24H. 최종 발표 & 수료": day4/24-final-presentation.md
+  - 부록:
+    - "노트북 번호 체계": appendix/notebook-numbering.md
+    - "트러블슈팅": appendix/troubleshooting.md
+    - "프로젝트 브리프": appendix/project-brief.md

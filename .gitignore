@@ -1,0 +1,36 @@
+# MkDocs build output (CI 가 빌드해서 gh-pages 로 자동 배포)
+site/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+.python-version
+
+# 빌드 산출물 / 임시 파일
+dist/
+build/
+review_output/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 비밀
+.env
+.env.local
+*.secret
+
+# 저작권 자료 (외부 공개 금지) — 강의 내부용 reference
+참고자료/
+
+# Claude / Cursor 작업 메모
+.claude/
+.cursor/

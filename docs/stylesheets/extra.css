@@ -1,0 +1,120 @@
+/* WikiDocs-style enhancements */
+
+/* 본문 최대 너비 확장 */
+.md-grid {
+  max-width: 1400px;
+}
+
+/* 코드 블록 배경 */
+.highlight code {
+  font-size: 0.85em;
+}
+
+/* admonition 커스텀 */
+.admonition.tip {
+  border-left-color: #ff9800 !important;
+}
+
+/* 네비게이션 항목 간격 */
+.md-nav__item {
+  margin-top: 0.1em;
+}
+
+/* 테이블 스타일 */
+.md-typeset table:not([class]) {
+  font-size: 0.82em;
+  border: 1px solid var(--md-typeset-table-color);
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+  font-weight: 600;
+}
+
+/* 사이드바 제목 스타일 */
+.md-nav__title {
+  font-weight: 700;
+}
+
+/* Hero section on index */
+.hero {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.hero h1 {
+  font-size: 2.2em;
+  margin-bottom: 0.5em;
+}
+
+/* Colab 실습 노트북 링크 박스 */
+.colab-link-box {
+  border: 1px solid var(--md-primary-fg-color);
+  border-left: 4px solid var(--md-primary-fg-color);
+  border-radius: 6px;
+  background: rgba(63, 81, 181, 0.04);
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+}
+
+.colab-link-box--pending {
+  border-color: #ff9800;
+  background: rgba(255, 152, 0, 0.06);
+}
+
+.colab-link-box__title {
+  font-weight: 700;
+  font-size: 1.02em;
+  margin-bottom: 0.6rem;
+}
+
+.colab-link-box__title code {
+  font-size: 0.92em;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0 0.3em;
+  border-radius: 3px;
+}
+
+.colab-link-box__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.colab-link-box__btn img {
+  height: 32px;
+  vertical-align: middle;
+}
+
+.colab-link-box__instructions {
+  flex: 1 1 280px;
+  font-size: 0.92em;
+  line-height: 1.55;
+}
+
+.colab-link-box__instructions ol {
+  margin: 0.4em 0 0 1.2em;
+  padding: 0;
+}
+
+.colab-link-box__instructions li {
+  margin-bottom: 0.15em;
+}
+
+.colab-link-box__pending {
+  color: #c47600;
+  font-weight: 600;
+}
+
+/* 다크 모드 보정 */
+[data-md-color-scheme="slate"] .colab-link-box {
+  background: rgba(255, 255, 255, 0.04);
+}
+[data-md-color-scheme="slate"] .colab-link-box--pending {
+  background: rgba(255, 152, 0, 0.10);
+}
+[data-md-color-scheme="slate"] .colab-link-box__title code {
+  background: rgba(255, 255, 255, 0.10);
+}
