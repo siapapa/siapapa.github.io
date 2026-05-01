@@ -1,13 +1,12 @@
 site_name: AI 기반 SQL 분석 에이전트 구축
 site_description: 24시간 집중 강의 — PostgreSQL · LlamaIndex · Vanna · LangChain · LangGraph · Ragas
 site_author: Jaeyoo
-# GitHub Pages 게시 URL — 사용자명/저장소명 확정 시 교체.
-# 예) https://<github-username>.github.io/<repo-name>/
-site_url: https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/
+# User Pages 저장소(<username>.github.io)는 서브경로 없이 루트로 게시됩니다.
+site_url: https://siapapa.github.io/
 
-# 우상단 GitHub 아이콘 링크 — 저장소가 만들어지면 이 두 줄도 교체.
-repo_name: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
-repo_url: https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME
+# 우상단 GitHub 아이콘 링크
+repo_name: siapapa/siapapa.github.io
+repo_url: https://github.com/siapapa/siapapa.github.io
 
 theme:
   name: material
