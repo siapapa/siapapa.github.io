@@ -4,9 +4,8 @@ site_author: Jaeyoo
 # User Pages 저장소(<username>.github.io)는 서브경로 없이 루트로 게시됩니다.
 site_url: https://siapapa.github.io/
 
-# 우상단 GitHub 아이콘 링크
-repo_name: siapapa/siapapa.github.io
-repo_url: https://github.com/siapapa/siapapa.github.io
+# 우상단 GitHub 아이콘 링크는 학생들이 강사용 노트북(notebooks/)에 직접 접근하지
+# 못하도록 의도적으로 비활성화. 다시 노출하려면 repo_name / repo_url 을 복원하면 됨.
 
 theme:
   name: material
@@ -40,7 +39,6 @@ theme:
     - toc.follow
   icon:
     logo: material/robot-happy-outline
-    repo: fontawesome/brands/github
 
 markdown_extensions:
   - admonition
@@ -70,11 +68,14 @@ markdown_extensions:
 plugins:
   - search:
       lang: en
-
-extra:
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com
+  - with-pdf:
+      output_path: pdf/AI_SQL_Agent_24H.pdf
+      cover_title: AI 기반 SQL 분석 에이전트 구축
+      cover_subtitle: 24시간 집중 강의 (Day 1 ~ Day 4)
+      author: Jaeyoo
+      toc_title: 목차
+      heading_shift: false
+      enabled_if_env: ENABLE_PDF_EXPORT
 
 extra_css:
   - stylesheets/extra.css
