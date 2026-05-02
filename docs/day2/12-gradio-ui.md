@@ -454,54 +454,15 @@ print(df.head(10))
 
     "감사합니다", "안녕", "고마워요" 같은 인사가 오면 SQL을 생성하지 않고 인사로 응답하는 기능을 `hospital_chat`에 추가합니다.
 
-    ```python
-    # 인사 패턴
-    GREETING_PATTERNS = re.compile(
-        r"(감사합니다|고마워|안녕|수고|반갑|잘\s*부탁|좋은\s*하루|화이팅|고마워요|감사해요)",
-        re.IGNORECASE,
-    )
+    구현 가이드:
 
-    GREETING_RESPONSES = [
-        "감사합니다! 다른 궁금한 점이 있으시면 언제든 질문해주세요. 😊",
-        "도움이 되었다면 다행입니다! 추가 분석이 필요하시면 말씀해주세요.",
-        "안녕하세요! 병원 DB에 대해 궁금한 점을 자유롭게 질문해주세요.",
-    ]
+    1. 인사 키워드(감사합니다 / 고마워 / 안녕 / 수고 / 반갑 / 잘 부탁 / 좋은 하루 / 화이팅 등)를 잡는 정규식 `GREETING_PATTERNS` 를 만드세요
+    2. 응답 후보 문자열 리스트 `GREETING_RESPONSES` 를 정의하세요 (3~5개 권장)
+    3. `hospital_chat` 을 복사해 `hospital_chat_v2` 를 만들고, 함수 가장 첫 줄에서 인사가 매칭되면 `random.choice(GREETING_RESPONSES)` 를 즉시 return 하도록 분기하세요
+    4. 매칭되지 않을 때만 기존 SQL 생성/실행 로직으로 흘러가야 합니다
+    5. 새 핸들러를 `gr.ChatInterface` 로 감싸 `examples=["안녕하세요!", "환자 수는?", "감사합니다!"]` 로 동작을 확인하세요
 
-    import random
-
-    def hospital_chat_v2(message: str, history: list) -> str:
-        """인사 감지가 추가된 Gradio 핸들러"""
-
-        # 인사 감지
-        if GREETING_PATTERNS.search(message):
-            return random.choice(GREETING_RESPONSES)
-
-        # 기존 로직 (SQL 생성 + 실행)
-        history_text = ""
-        for turn in history[-5:]:
-            if isinstance(turn, (list, tuple)) and len(turn) == 2:
-                history_text += f"사용자: {turn[0]}\n시스템: {turn[1][:100]}\n"
-
-        try:
-            sql = generate_sql(message, history_text)
-            result = safe_execute(sql)
-            if result.startswith("🚫") or result.startswith("❌"):
-                return result
-            answer = summarize_result(message, sql, result)
-            return f"{answer}\n\n---\n📝 **SQL:**\n```sql\n{sql}\n```\n\n📊 **결과:**\n{result}"
-        except Exception as e:
-            return f"⚠️ 오류: {str(e)}"
-
-    # 테스트
-    demo_v2 = gr.ChatInterface(
-        fn=hospital_chat_v2,
-        title="🏥 병원 DB AI 상담사 v2",
-        description="인사 감지 기능이 추가된 버전입니다.",
-        examples=["안녕하세요!", "환자 수는?", "감사합니다!"],
-        theme=gr.themes.Soft(),
-    )
-    demo_v2.launch(share=True)
-    ```
+    *힌트: 위쪽 "hospital_chat 핸들러" 셀을 베이스로 두고, **함수 본문 시작 부분에 if 분기 한 줄만** 추가하면 됩니다. 정답 코드는 숨겨져 있으니, 먼저 본인이 짠 정규식이 "안녕하세요" / "감사해요" / "환자 수는?" 세 문장을 어떻게 구분하는지 직접 테스트해 보세요.*
 
 !!! tip "Gradio 앱을 Google Drive에 저장하는 방법"
     Colab 노트북 자체가 Gradio 앱의 소스코드입니다. Google Drive에 저장하면 언제든 다시 실행할 수 있습니다.

@@ -365,48 +365,14 @@ erDiagram
 !!! example "실습 — COMMENT 완성도 검사"
     병원 DB의 모든 컬럼에 COMMENT가 달려 있는지 검사하세요.
 
-    ```python
-    # COMMENT가 없는 컬럼 찾기
-    run_query("""
-        SELECT 
-            c.table_name,
-            c.column_name,
-            CASE WHEN pgd.description IS NULL THEN '❌ COMMENT 없음'
-                 ELSE '✅ ' || pgd.description
-            END AS comment_status
-        FROM information_schema.columns c
-        JOIN pg_catalog.pg_class cls
-            ON cls.relname = c.table_name
-        JOIN pg_catalog.pg_namespace ns
-            ON ns.oid = cls.relnamespace AND ns.nspname = c.table_schema
-        LEFT JOIN pg_catalog.pg_attribute a
-            ON a.attrelid = cls.oid AND a.attname = c.column_name
-        LEFT JOIN pg_catalog.pg_description pgd
-            ON pgd.objoid = cls.oid
-            AND pgd.objsubid = a.attnum
-        WHERE c.table_schema = 'public'
-        ORDER BY c.table_name, c.ordinal_position
-    """, "COMMENT 완성도 검사")
-    ```
+    _힌트: `information_schema.columns`와 `pg_catalog.pg_description`을 LEFT JOIN하고, `pgd.description IS NULL`인 컬럼을 'COMMENT 없음'으로 표시하세요. JOIN 키는 `pg_class.oid`(테이블)와 `pg_attribute.attnum`(컬럼)입니다._
 
     COMMENT가 빠진 컬럼이 있다면 `COMMENT ON COLUMN ...`으로 추가해보세요.
 
 !!! example "실습 — vw_visit_details로 조회"
     `vw_visit_details` 뷰를 사용하여 "2026년 내과 외래 진료 건수"를 조회하세요.
 
-    ```python
-    run_query("""
-        SELECT 
-            department_name,
-            COUNT(*) AS visit_count
-        FROM vw_visit_details
-        WHERE EXTRACT(YEAR FROM visit_date) = 2026
-          AND department_name = '내과'
-          AND visit_type = 'outpatient'
-          AND status = 'completed'
-        GROUP BY department_name
-    """, "2026년 내과 외래 진료 건수")
-    ```
+    _힌트: `vw_visit_details`에서 `EXTRACT(YEAR FROM visit_date) = 2026`, `department_name = '내과'`, `visit_type = 'outpatient'`, `status = 'completed'` 조건으로 `COUNT(*)`를 집계하세요._
 
     뷰 없이 같은 결과를 얻으려면 4개 테이블을 JOIN해야 합니다.
     뷰를 사용하면 쿼리가 얼마나 단순해지는지 체감해보세요.

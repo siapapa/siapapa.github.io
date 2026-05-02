@@ -435,25 +435,15 @@ print(rbot.chat("진료과별 월 평균 방문 수를 최근 3개월 기준으�
 
     아래 시나리오를 참고하여 5턴 이상의 연속 대화를 진행해보세요. 맥락이 잘 유지되는지 확인합니다.
 
-    ```python
-    bot = HospitalChatbot(engine, schema_info)
+    시나리오 예시 (참고용):
 
-    # 시나리오 예시
-    conversations = [
-        "여성 환자는 몇 명인가요?",
-        "그 중에 30세 미만은?",
-        "그 사람들 중 응급 진료를 받은 적 있는 사람은?",
-        "그 환자들의 진단명을 보여줘",
-        "그 중 중증(severe) 진단은?",
-    ]
+    1. "여성 환자는 몇 명인가요?"
+    2. "그 중에 30세 미만은?"
+    3. "그 사람들 중 응급 진료를 받은 적 있는 사람은?"
+    4. "그 환자들의 진단명을 보여줘"
+    5. "그 중 중증(severe) 진단은?"
 
-    for q in conversations:
-        print(f"{'='*60}")
-        print(f"👤 사용자: {q}")
-        print(f"{'='*60}")
-        print(bot.chat(q))
-        print()
-    ```
+    *힌트: `HospitalChatbot(engine, schema_info)` 인스턴스를 만들고 질문을 리스트로 정리한 뒤 for 루프로 `bot.chat(q)` 를 호출해 출력하세요. 정답 코드는 숨겨져 있습니다 -- 본인이 직접 시나리오를 짜서 돌려 보아야 맥락 유지가 어디서 깨지는지 보입니다.*
 
     **확인할 점:**
 
@@ -464,37 +454,15 @@ print(rbot.chat("진료과별 월 평균 방문 수를 최근 3개월 기준으�
 !!! example "실습"
     **UNION 차단 패턴을 SQLGuardrail에 추가하세요.**
 
-    UNION을 사용한 SQL 인젝션 공격을 차단하는 패턴을 추가합니다.
+    `SQLGuardrail` 을 상속한 `EnhancedSQLGuardrail` 클래스를 만들고, `BLOCKED_PATTERNS` 정규식에 `UNION SELECT` / `UNION ALL SELECT` 를 잡아내는 항목을 추가하세요.
 
-    ```python
-    class EnhancedSQLGuardrail(SQLGuardrail):
-        """UNION 차단이 추가된 가드레일"""
+    아래 3가지 케이스로 동작을 검증하세요:
 
-        BLOCKED_PATTERNS = re.compile(
-            r"(information_schema|pg_catalog|pg_stat|pg_roles|"
-            r"--\s|/\*|\*/|;\s*DROP|;\s*DELETE|"
-            r"\bUNION\b\s+(ALL\s+)?SELECT)",  # UNION SELECT 차단 추가
-            re.IGNORECASE,
-        )
+    1. 정상 쿼리: `SELECT name FROM patients WHERE gender = 'M'` -> 통과
+    2. UNION 인젝션: `SELECT name FROM patients UNION SELECT password FROM pg_roles` -> 차단
+    3. UNION ALL 인젝션: `SELECT name FROM patients UNION ALL SELECT table_name FROM information_schema.tables` -> 차단
 
-    # 테스트
-    enhanced_guard = EnhancedSQLGuardrail(
-        allowed_tables=["patients", "doctors", "visits", "diagnoses", "departments"])
-
-    # 정상 쿼리
-    sql, err = enhanced_guard.sanitize("SELECT name FROM patients WHERE gender = 'M'")
-    print(f"✅ 정상: {sql[:50]}...")
-
-    # UNION 인젝션 시도
-    _, err = enhanced_guard.sanitize(
-        "SELECT name FROM patients UNION SELECT password FROM pg_roles")
-    print(f"❌ 차단: {err}")
-
-    # UNION ALL 인젝션 시도
-    _, err = enhanced_guard.sanitize(
-        "SELECT name FROM patients UNION ALL SELECT table_name FROM information_schema.tables")
-    print(f"❌ 차단: {err}")
-    ```
+    *힌트: 기존 `SQLGuardrail.BLOCKED_PATTERNS` 정규식을 그대로 복사한 뒤, alternation(`|`) 으로 `\bUNION\b\s+(ALL\s+)?SELECT` 같은 패턴을 한 줄 끼워 넣으면 됩니다. 정답 코드는 숨겨져 있습니다 -- 정규식을 직접 작성해 보아야 escape/대소문자 처리가 손에 익습니다.*
 
 ---
 

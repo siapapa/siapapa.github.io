@@ -259,52 +259,22 @@ print(training_data.head(10))
 !!! example "실습 -- 학습 전후 정답률 비교"
     13H에서 측정한 베이스라인 정답률과 비교하세요!
 
-```python
-# ============================================================
-# 5. 학습 후 정확도 측정 (10개 질문)
-# ============================================================
+    아래 10개 질문을 `vn.generate_sql()` + `vn.run_sql()` 로 돌려 학습 후 정답률을 측정하세요.
 
-test_questions = [
-    ("전체 환자 수는?", "단일 숫자"),
-    ("남성 환자 중 40세 이상은 몇 명?", "단일 숫자"),
-    ("진료과별 의사 수를 보여줘", "진료과-의사수 표"),
-    ("지난달 완료 진료 건수는?", "단일 숫자"),
-    ("응급 진료 평균 비용은?", "단일 숫자"),
-    ("가장 많이 방문한 환자 Top 3는?", "환자명-방문수 표"),
-    ("중증 진단을 받은 환자 이름은?", "환자명 목록"),
-    ("2026년 월별 방문 수 추이는?", "월-방문수 표"),
-    ("내과 의사 중 급여가 가장 높은 사람은?", "의사명+급여"),
-    ("혈액형별 환자 분포는?", "혈액형-환자수 표"),
-]
+    | # | 질문 | 기대 형식 |
+    |---|---|---|
+    | 1 | 전체 환자 수는? | 단일 숫자 |
+    | 2 | 남성 환자 중 40세 이상은 몇 명? | 단일 숫자 |
+    | 3 | 진료과별 의사 수를 보여줘 | 진료과-의사수 표 |
+    | 4 | 지난달 완료 진료 건수는? | 단일 숫자 |
+    | 5 | 응급 진료 평균 비용은? | 단일 숫자 |
+    | 6 | 가장 많이 방문한 환자 Top 3는? | 환자명-방문수 표 |
+    | 7 | 중증 진단을 받은 환자 이름은? | 환자명 목록 |
+    | 8 | 2026년 월별 방문 수 추이는? | 월-방문수 표 |
+    | 9 | 내과 의사 중 급여가 가장 높은 사람은? | 의사명+급여 |
+    | 10 | 혈액형별 환자 분포는? | 혈액형-환자수 표 |
 
-results = []
-for question, expected_format in test_questions:
-    try:
-        sql = vn.generate_sql(question)
-        df = vn.run_sql(sql)
-        status = "✅" if df is not None and len(df) > 0 else "⚠️ 빈 결과"
-        results.append({
-            "question": question,
-            "status": status,
-            "sql": sql,
-            "rows": len(df) if df is not None else 0,
-        })
-    except Exception as e:
-        results.append({
-            "question": question,
-            "status": "❌",
-            "sql": str(e)[:80],
-            "rows": 0,
-        })
-
-import pandas as pd
-df_results = pd.DataFrame(results)
-print("\n📊 학습 후 정확도:")
-print(df_results[["question", "status", "rows"]].to_string(index=False))
-
-success = len(df_results[df_results["status"] == "✅"])
-print(f"\n🎯 정답률: {success}/{len(test_questions)} ({success/len(test_questions)*100:.0f}%)")
-```
+    *힌트: 13H 베이스라인 측정 코드를 재사용하여 결과를 `pd.DataFrame` 으로 정리하고, `✅ / ⚠️ / ❌` 카운트로 정답률을 출력하세요.*
 
 !!! example "실습 -- 학습 전후 정답률 비교표 작성"
     아래 표를 복사하여 본인의 결과를 채워 넣으세요.

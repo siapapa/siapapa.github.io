@@ -258,37 +258,13 @@ print(f"Q: {q2}\nA: {a2}")
 !!! example "실습 -- batch로 3개 질문 동시 실행"
     `batch` 메서드를 사용하면 여러 질문을 동시에 처리할 수 있습니다.
 
-    ```python
-    # ============================================================
-    # 6. batch로 3개 질문 동시 실행
-    # ============================================================
-    questions = [
-        "내과에 어떤 의사가 있나요?",
-        "입원 병실 가격을 알려주세요",
-        "주차 요금이 어떻게 되나요?",
-    ]
+    아래 3개 질문에 대해 (1) 순차 실행(`for` + `invoke`)과 (2) 배치 실행(`rag_chain.batch(...)`)의 시간을 각각 측정하고, 속도 향상 배수를 출력하세요.
 
-    import time
+    1. 내과에 어떤 의사가 있나요?
+    2. 입원 병실 가격을 알려주세요
+    3. 주차 요금이 어떻게 되나요?
 
-    # 순차 실행 시간 측정
-    start = time.time()
-    sequential_results = [rag_chain.invoke(q) for q in questions]
-    seq_time = time.time() - start
-
-    # 배치 실행 시간 측정
-    start = time.time()
-    batch_results = rag_chain.batch(questions)
-    batch_time = time.time() - start
-
-    print(f"⏱️ 순차 실행: {seq_time:.2f}초")
-    print(f"⏱️ 배치 실행: {batch_time:.2f}초")
-    print(f"🚀 속도 향상: {seq_time/batch_time:.1f}배\n")
-
-    for q, a in zip(questions, batch_results):
-        print(f"Q: {q}")
-        print(f"A: {a[:100]}...")
-        print()
-    ```
+    *힌트: `time.time()` 으로 시작·종료 시각을 찍어 차이를 구하고, 두 시간의 비율로 속도 향상을 계산합니다. 답변은 `[:100]` 로 잘라 미리보기만 출력하세요.*
 
     **기대 결과:** 배치 실행이 순차 실행보다 2~3배 빠릅니다.
 

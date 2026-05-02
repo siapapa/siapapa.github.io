@@ -213,45 +213,17 @@ if training_data is not None and len(training_data) > 0:
     학습 전 상태에서 5개 질문을 테스트하고 정답률을 기록하세요.
     14H에서 학습 후 결과와 비교할 것입니다.
 
-    ```python
-    # ============================================================
-    # 6. 베이스라인 정답률 측정 (5개 질문)
-    # ============================================================
-    import pandas as pd
+    아래 5개 질문에 대해 학습 자산 없이 `vn.generate_sql()` + `vn.run_sql()` 을 실행하고, `pandas` DataFrame 으로 결과표를 만들어 정답률(`✅ 성공` 비율)을 출력하세요.
 
-    baseline_questions = [
-        ("전체 환자 수는 몇 명인가요?", "단일 숫자"),
-        ("남성 환자 수는?", "단일 숫자"),
-        ("진료과별 의사 수를 보여줘", "진료과-의사수 표"),
-        ("지난달 완료 진료 건수는?", "단일 숫자"),
-        ("가장 많이 방문한 환자 Top 5는?", "환자명-방문수 표"),
-    ]
+    | # | 질문 | 기대 형식 |
+    |---|---|---|
+    | 1 | 전체 환자 수는 몇 명인가요? | 단일 숫자 |
+    | 2 | 남성 환자 수는? | 단일 숫자 |
+    | 3 | 진료과별 의사 수를 보여줘 | 진료과-의사수 표 |
+    | 4 | 지난달 완료 진료 건수는? | 단일 숫자 |
+    | 5 | 가장 많이 방문한 환자 Top 5는? | 환자명-방문수 표 |
 
-    baseline_results = []
-    for question, expected_format in baseline_questions:
-        try:
-            sql = vn.generate_sql(question)
-            df = vn.run_sql(sql)
-            if df is not None and len(df) > 0:
-                status = "✅ 성공"
-            else:
-                status = "⚠️ 빈 결과"
-        except Exception as e:
-            status = f"❌ 에러"
-            sql = str(e)[:80]
-        baseline_results.append({
-            "질문": question,
-            "기대 형식": expected_format,
-            "결과": status,
-        })
-        print(f"{status} | {question}")
-
-    df_baseline = pd.DataFrame(baseline_results)
-    success = len(df_baseline[df_baseline["결과"] == "✅ 성공"])
-    print(f"\n🎯 베이스라인 정답률: {success}/{len(baseline_questions)} ({success/len(baseline_questions)*100:.0f}%)")
-    print("\n📋 결과표:")
-    print(df_baseline.to_string(index=False))
-    ```
+    *힌트: `try/except` 로 SQL 생성·실행 실패를 분류하고, 결과를 리스트에 모아 `pd.DataFrame` 으로 출력하세요. 정답률은 성공 건수를 전체 건수로 나눠 계산합니다.*
 
     **예상 결과 (학습 전):**
 

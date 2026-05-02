@@ -410,25 +410,13 @@ print(f"✅ 재접속 후 문서 수: {collection2.count()}")
 !!! example "실습 — 의료 용어 유사도 실험"
     의료 도메인에서 유사한 표현들의 임베딩 유사도를 실험해보세요.
 
-    ```python
-    # 의료 용어 유사도 테스트
-    medical_terms = [
-        "고혈압",
-        "혈압이 높다",
-        "두통",
-        "머리가 아프다",
-        "당뇨병",
-        "혈당이 높다",
-    ]
+    테스트할 용어 6개:
 
-    med_embeddings = [get_embedding(t) for t in medical_terms]
+    - "고혈압", "혈압이 높다"
+    - "두통", "머리가 아프다"
+    - "당뇨병", "혈당이 높다"
 
-    print("📊 의료 용어 유사도:")
-    for i in range(len(medical_terms)):
-        for j in range(i+1, len(medical_terms)):
-            sim = cosine_similarity(med_embeddings[i], med_embeddings[j])
-            print(f"  '{medical_terms[i]}' vs '{medical_terms[j]}' → {sim:.4f}")
-    ```
+    _힌트: 위 6개 용어를 리스트로 만들고 각각 `get_embedding(t)`로 임베딩한 뒤, 이중 for 루프(`i, j with i<j`)로 모든 쌍에 대해 `cosine_similarity()`를 출력하세요._
 
     **관찰 포인트:**
 

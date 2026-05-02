@@ -344,39 +344,7 @@ print("   - cost의 단위를 알 수 없음")
 !!! example "실습"
     **본인이 만든 질문 5개로 테스트하고 성공/실패를 기록하세요.**
 
-    아래 코드를 복사하여 본인의 질문으로 바꿔 실행하세요.
-
-    ```python
-    # 본인의 질문 5개로 테스트
-    my_questions = [
-        "여기에 질문 1을 입력하세요",
-        "여기에 질문 2를 입력하세요",
-        "여기에 질문 3을 입력하세요",
-        "여기에 질문 4를 입력하세요",
-        "여기에 질문 5를 입력하세요",
-    ]
-
-    my_results = []
-    for q in my_questions:
-        try:
-            resp = nlq.query(q)
-            print(f"✅ Q: {q}")
-            print(f"   SQL: {resp.metadata['sql_query']}")
-            print(f"   A: {resp.response[:100]}\n")
-            my_results.append({"question": q, "status": "성공", "reason": ""})
-        except Exception as e:
-            print(f"❌ Q: {q}")
-            print(f"   오류: {str(e)[:80]}\n")
-            my_results.append({"question": q, "status": "실패", "reason": str(e)[:50]})
-
-    # 결과 정리
-    print("\n📋 내 질문 테스트 결과:")
-    for r in my_results:
-        icon = "✅" if r["status"] == "성공" else "❌"
-        print(f"  {icon} {r['question']}")
-        if r["reason"]:
-            print(f"     원인: {r['reason']}")
-    ```
+    _힌트: Easy/Medium/Hard 난이도가 섞이도록 질문 5개를 리스트로 만들고, 각 질문에 대해 `nlq.query(q)`를 `try/except`로 감싸서 `resp.metadata['sql_query']`와 `resp.response`를 출력하세요. 실패 시 예외 메시지를 같이 기록해 두면 분석에 유용합니다._
 
     **성공/실패를 기록할 때 다음을 분석하세요:**
 

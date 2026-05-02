@@ -249,26 +249,12 @@ if report["issues"]:
     **validate_schema를 본인 스키마에 실행하세요.**
 
     1. 본인의 Neon DB에 접속합니다
-    2. 본인이 설계한 테이블 이름으로 바꿔서 실행합니다:
+    2. 본인이 설계한 테이블 이름 리스트로 `validate_schema(engine, my_tables)` 를 호출하세요
+    3. 점수와 함께 각 테이블의 PK / FK / COMMENT 비율을 출력해, 어디가 부족한지 확인하세요
+    4. 점수가 80점 미만이면 COMMENT를 추가하세요
+    5. 피어리뷰에서 이 결과를 공유하세요
 
-    ```python
-    # 본인 테이블로 변경하세요!
-    my_tables = ["my_table1", "my_table2", "my_table3"]
-    my_report = validate_schema(engine, my_tables)
-
-    print(f"📊 내 스키마 검증 결과: {my_report['score']}점 / 100점\n")
-    for table, info in my_report["tables"].items():
-        pk_icon = "✅" if info["pk"] else "❌"
-        print(f"  {table}: PK {pk_icon} | FK {info['fks']}개 | COMMENT {info['comments']}/{info['columns']}")
-
-    if my_report["issues"]:
-        print(f"\n⚠️ 개선 필요 ({len(my_report['issues'])}건):")
-        for issue in my_report["issues"]:
-            print(f"  {issue}")
-    ```
-
-    3. 점수가 80점 미만이면 COMMENT를 추가하세요
-    4. 피어리뷰에서 이 결과를 공유하세요
+    *힌트: 위 "실행 예시" 셀의 출력 형식을 참고해, `report["tables"]` 와 `report["issues"]` 를 순회하며 직접 출력해 보세요. 정답 코드는 제공되지 않습니다 -- 본인 손으로 작성해야 점수의 의미가 체감됩니다.*
 
 ---
 

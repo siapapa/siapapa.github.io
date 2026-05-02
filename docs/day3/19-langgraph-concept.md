@@ -261,69 +261,15 @@ for event in retry_app.stream({"task": "추적 테스트", "result": "", "error"
 !!! example "실습 -- 노드 추가하여 로깅 기능 구현"
     기존 그래프에 `log` 노드를 추가하여 모든 작업을 기록합니다.
 
-    ```python
-    # ============================================================
-    # 5. 노드 추가 -- 로깅 기능
-    # ============================================================
-    from typing import TypedDict
+    `SimpleState` 를 확장한 `LogState`(`message: str`, `step: int`, `log: list`) 를 정의하고, 다음 4개 노드로 그래프를 조립하세요.
 
-    class LogState(TypedDict):
-        message: str
-        step: int
-        log: list
+    - `greet` → `process` → `log` → `finish` → `END`
+    - 각 노드는 자신이 한 일을 `log` 리스트에 append (예: `[greet] ...`).
+    - `log` 노드는 누적된 로그 전체를 `print` 로 출력.
 
-    def greet_with_log(state: LogState) -> dict:
-        msg = f"안녕하세요! (step={state['step']})"
-        return {
-            "message": msg,
-            "step": state["step"] + 1,
-            "log": state.get("log", []) + [f"[greet] {msg}"],
-        }
+    실행 후 `result['message']`, `result['step']`, `result['log']` 를 모두 출력하여 노드들이 순서대로 실행되었는지 확인하세요.
 
-    def process_with_log(state: LogState) -> dict:
-        msg = state["message"] + " --> 처리 완료!"
-        return {
-            "message": msg,
-            "step": state["step"] + 1,
-            "log": state.get("log", []) + [f"[process] 처리 실행"],
-        }
-
-    def log_node(state: LogState) -> dict:
-        """로깅 노드 -- 현재까지의 로그를 출력"""
-        print("📝 실행 로그:")
-        for entry in state.get("log", []):
-            print(f"  {entry}")
-        return {"log": state.get("log", []) + ["[log] 로그 출력 완료"]}
-
-    def finish_with_log(state: LogState) -> dict:
-        msg = state["message"] + " --> 종료."
-        return {
-            "message": msg,
-            "step": state["step"] + 1,
-            "log": state.get("log", []) + [f"[finish] {msg}"],
-        }
-
-    # 그래프 조립 (log 노드 추가)
-    log_graph = StateGraph(LogState)
-    log_graph.add_node("greet", greet_with_log)
-    log_graph.add_node("process", process_with_log)
-    log_graph.add_node("log", log_node)
-    log_graph.add_node("finish", finish_with_log)
-
-    log_graph.set_entry_point("greet")
-    log_graph.add_edge("greet", "process")
-    log_graph.add_edge("process", "log")       # process 후 log 실행
-    log_graph.add_edge("log", "finish")
-    log_graph.add_edge("finish", END)
-
-    log_app = log_graph.compile()
-
-    # 실행
-    result = log_app.invoke({"message": "", "step": 0, "log": []})
-    print(f"\n최종 메시지: {result['message']}")
-    print(f"총 스텝: {result['step']}")
-    print(f"전체 로그: {result['log']}")
-    ```
+    *힌트: 노드 함수는 변경할 키만 dict 로 반환하면 됩니다. 누적 로그는 `state.get("log", []) + ["[노드명] ..."]` 패턴을 사용하세요. `log` 키 초기값을 빈 리스트로 명시해 `invoke({"message": "", "step": 0, "log": []})` 로 시작합니다.*
 
 ---
 

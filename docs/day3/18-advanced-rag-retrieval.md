@@ -275,26 +275,9 @@ for doc, score in reranked:
 !!! example "실습 -- 최적 weight 찾기 실험"
     BM25와 벡터의 비율을 0.0 ~ 1.0까지 변경하면서 검색 결과를 비교합니다.
 
-    ```python
-    # ============================================================
-    # 4. 검색 품질 비교 -- weight 실험
-    # ============================================================
-    question = "정형외과 척추 전문의"
+    질문 `"정형외과 척추 전문의"` 에 대해 BM25 가중치를 `[0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]` 으로 바꿔가며 `EnsembleRetriever` 의 Top-1 결과가 어떻게 달라지는지 표로 출력하세요.
 
-    print(f"❓ 질문: {question}\n")
-    print(f"{'BM25':>6} | {'Vector':>6} | {'Top 1 결과':<50}")
-    print(f"{'-'*6} | {'-'*6} | {'-'*50}")
-
-    for bm25_w in [0.0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0]:
-        vec_w = 1.0 - bm25_w
-        ens = EnsembleRetriever(
-            retrievers=[bm25_retriever, vector_retriever],
-            weights=[bm25_w, vec_w],
-        )
-        results = ens.invoke(question)
-        top_doc = results[0].page_content[:50] if results else "(없음)"
-        print(f"  {bm25_w:.1f} |   {vec_w:.1f} | {top_doc}...")
-    ```
+    *힌트: 반복문 안에서 매번 새 `EnsembleRetriever(retrievers=[bm25_retriever, vector_retriever], weights=[bm25_w, 1.0 - bm25_w])` 를 만들고, `invoke(question)[0].page_content[:50]` 로 Top-1 미리보기를 뽑아 한 줄씩 정렬해 출력합니다.*
 
     **결과 기록표:**
 

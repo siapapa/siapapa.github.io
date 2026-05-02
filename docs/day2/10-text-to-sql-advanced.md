@@ -474,38 +474,12 @@ experiment(q, prompt_c, "C: few-shot + 규칙")
 !!! example "실습"
     **Day 1에서 실패한 질문 3개를 커스텀 프롬프트로 재시도하세요.**
 
-    1. Day 1 7H에서 실패한 질문 3개를 적으세요
-    2. `custom_text_to_sql_prompt`를 사용하는 `nlq_custom`으로 재시도합니다
-    3. Before(기본)/After(커스텀) 결과를 비교하세요
+    1. Day 1 7H에서 실패했거나 어색했던 질문 3개를 리스트로 정리하세요
+    2. 각 질문을 `nlq.query(...)` (기본) 와 `nlq_custom.query(...)` (커스텀) 에 동일하게 던지세요
+    3. 각 시도에서 `response.metadata["sql_query"]` 를 꺼내 두 SQL 을 나란히 출력하세요
+    4. 단순 ✅/❌ 가 아니라 **생성된 SQL의 차이**(필터 조건, 별칭, JOIN 경로)를 직접 비교 정리하세요
 
-    ```python
-    # Day 1에서 실패한 질문 3개
-    failed_questions = [
-        "여기에 실패한 질문 1을 입력",
-        "여기에 실패한 질문 2를 입력",
-        "여기에 실패한 질문 3를 입력",
-    ]
-
-    print("📊 Day 1 실패 질문 재시도 (기본 vs 커스텀)\n")
-    for q in failed_questions:
-        print(f"❓ 질문: {q}")
-
-        # 기본 프롬프트
-        try:
-            resp_basic = nlq.query(q)
-            print(f"  [기본] ✅ SQL: {resp_basic.metadata['sql_query'][:80]}")
-        except Exception as e:
-            print(f"  [기본] ❌ 실패: {str(e)[:60]}")
-
-        # 커스텀 프롬프트
-        try:
-            resp_custom = nlq_custom.query(q)
-            print(f"  [커스텀] ✅ SQL: {resp_custom.metadata['sql_query'][:80]}")
-        except Exception as e:
-            print(f"  [커스텀] ❌ 실패: {str(e)[:60]}")
-
-        print()
-    ```
+    *힌트: 위의 "Before/After 비교 실험" 셀을 참고해 try/except 로 두 엔진을 모두 호출하면 됩니다. 정답 코드는 숨겨져 있으니, 실패 질문을 본인 메모에서 꺼내 직접 작성해 보세요.*
 
 !!! question "생각해보기"
     **본인 도메인에 맞는 모호성 처리 규칙을 3개 작성하세요.**

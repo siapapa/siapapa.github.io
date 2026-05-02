@@ -315,28 +315,13 @@ print(f"JSON 결과: {result}")
 !!! example "실습 -- SQL 생성 체인으로 병원 DB 질문 3개 테스트"
     `with_structured_output`을 활용하여 병원 DB 질문 3개를 테스트합니다.
 
-    ```python
-    # ============================================================
-    # 7. SQL 생성 체인 -- 병원 DB 질문 3개 테스트
-    # ============================================================
+    아래 3개 질문을 위에서 만든 `struct_chain` 으로 실행하고, 반환된 `SQLAnalysis` 객체의 `tables / join_needed / aggregation / difficulty / sql` 을 출력하세요.
 
-    hospital_questions = [
-        "전체 환자 수는 몇 명인가요?",
-        "진료과별 의사 수를 보여주세요",
-        "지난달 응급 진료 건수와 평균 비용은?",
-    ]
+    1. 전체 환자 수는 몇 명인가요?
+    2. 진료과별 의사 수를 보여주세요
+    3. 지난달 응급 진료 건수와 평균 비용은?
 
-    for q in hospital_questions:
-        print(f"\n{'='*50}")
-        print(f"❓ 질문: {q}")
-        print(f"{'='*50}")
-        result = struct_chain.invoke({"question": q})
-        print(f"  📋 테이블: {result.tables}")
-        print(f"  🔗 JOIN 필요: {result.join_needed}")
-        print(f"  📊 집계 함수: {result.aggregation}")
-        print(f"  ⚡ 난이도: {result.difficulty}")
-        print(f"  💾 SQL:\n    {result.sql}")
-    ```
+    *힌트: `struct_chain.invoke({"question": q})` 의 반환값은 Pydantic 객체이므로 점 표기법(`result.tables`, `result.sql` 등)으로 필드에 접근할 수 있습니다.*
 
     **기대 결과:**
 

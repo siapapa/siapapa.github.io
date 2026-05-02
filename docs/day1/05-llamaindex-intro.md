@@ -341,20 +341,7 @@ for i, node in enumerate(nodes_found):
 !!! example "실습 — chunk_size 비교 실험"
     `chunk_size`를 128, 256, 512로 바꿔서 각각의 노드 수와 검색 결과를 비교해보세요.
 
-    ```python
-    for size in [128, 256, 512]:
-        sp = SentenceSplitter(chunk_size=size, chunk_overlap=30)
-        ns = sp.get_nodes_from_documents(hospital_docs)
-        print(f"chunk_size={size}: {len(ns)}개 노드")
-        
-        idx = VectorStoreIndex.from_documents(
-            hospital_docs, transformations=[sp]
-        )
-        qe = idx.as_query_engine(similarity_top_k=3)
-        resp = qe.query("입원 1인실 비용은?")
-        print(f"  답변: {resp.response[:80]}...")
-        print()
-    ```
+    _힌트: `for size in [128, 256, 512]:` 루프 안에서 매번 `SentenceSplitter`와 `VectorStoreIndex`를 새로 만들고, 같은 질문("입원 1인실 비용은?")으로 `query_engine.query()`를 호출해 노드 수와 답변을 출력하세요._
 
     **관찰 포인트:**
 
@@ -365,40 +352,15 @@ for i, node in enumerate(nodes_found):
 !!! example "실습 — 새 문서 추가 후 재인덱싱"
     "비급여 항목 안내" 문서를 추가하고 인덱스를 재구성해보세요.
 
-    ```python
-    # 새 문서 추가
-    new_doc = Document(
-        text="""
-        비급여 항목 안내
-        
-        아래 항목은 건강보험이 적용되지 않는 비급여 항목입니다.
-        
-        - 일반 건강검진: 150,000원
-        - 종합 건강검진: 500,000원
-        - MRI 촬영: 400,000원~800,000원 (부위별 상이)
-        - CT 촬영: 200,000원~400,000원
-        - 도수치료: 1회 80,000원
-        - 미용 시술 (보톡스, 필러 등): 별도 상담
-        
-        비급여 항목은 카드 할부 결제가 가능합니다.
-        자세한 비용은 해당 진료과에 문의해 주세요.
-        """,
-        metadata={"source": "hospital_guide", "section": "비급여안내", "doc_type": "guide"}
-    )
+    문서에 들어갈 내용 예시:
 
-    # 기존 문서 + 새 문서
-    all_docs = hospital_docs + [new_doc]
-    
-    # 재인덱싱
-    new_index = VectorStoreIndex.from_documents(
-        all_docs, transformations=[splitter], show_progress=True
-    )
-    new_qe = new_index.as_query_engine(similarity_top_k=3)
-    
-    # 테스트
-    resp = new_qe.query("MRI 비용은 얼마인가요?")
-    print(f"💬 {resp.response}")
-    ```
+    - 일반 건강검진: 150,000원
+    - 종합 건강검진: 500,000원
+    - MRI 촬영: 400,000원~800,000원 (부위별 상이)
+    - CT 촬영: 200,000원~400,000원
+    - 도수치료: 1회 80,000원
+
+    _힌트: 새 `Document(text=..., metadata={"section": "비급여안내", ...})`를 만들어 `hospital_docs + [new_doc]`로 합친 뒤, `VectorStoreIndex.from_documents(...)`로 재인덱싱하고 "MRI 비용은 얼마인가요?"로 질의하세요._
 
 !!! question "생각해보기"
     1. 병원 안내 문서 대신 본인 프로젝트의 도메인 문서를 로딩한다면 어떤 문서를 넣겠습니까?
