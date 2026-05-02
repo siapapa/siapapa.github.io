@@ -89,31 +89,7 @@ Trace (전체 에이전트 실행 1건)
 
 ### 부트스트랩
 
-```python
-!pip install -q \
-    "langgraph>=0.2.20" "langchain>=0.3.0" "langchain-openai>=0.2.0" \
-    "langsmith>=0.1.70,<0.2" \
-    "ragas>=0.1.17,<0.2" datasets \
-    sqlalchemy psycopg2-binary pandas tabulate matplotlib \
-    "openai>=1.30" sqlparse
-
-import os
-from google.colab import userdata
-os.environ["OPENAI_API_KEY"]     = userdata.get("OPENAI_API_KEY")
-os.environ["NEON_DSN"]           = userdata.get("NEON_DSN")
-# 2024+ 표준 env var 이름. 구버전 LANGCHAIN_* 는 deprecated
-os.environ["LANGSMITH_TRACING"]  = "true"
-os.environ["LANGSMITH_API_KEY"]  = userdata.get("LANGSMITH_KEY")
-os.environ["LANGSMITH_PROJECT"]  = "sql-agent-final"
-
-from sqlalchemy import create_engine, text
-import pandas as pd
-engine = create_engine(
-    os.environ["NEON_DSN"],       # 반드시 ?sslmode=require 포함
-    pool_pre_ping=True,
-    pool_recycle=300,
-)
-```
+_힌트: `pip install`로 langgraph/langchain/langsmith/ragas 등 의존성 설치 후, `google.colab.userdata`에서 `OPENAI_API_KEY`/`NEON_DSN`/LangSmith 키를 읽어 `os.environ`에 주입하고 `sqlalchemy.create_engine`으로 Neon 연결을 만드세요._
 
 !!! warning "env var 이름에 주의"
     `LANGCHAIN_TRACING_V2` / `LANGCHAIN_API_KEY` / `LANGCHAIN_PROJECT` 는 **deprecated**.
@@ -121,16 +97,7 @@ engine = create_engine(
 
 ### LangSmith 환경변수 확인
 
-```python
-# ============================================================
-# 1. LangSmith 환경변수 설정 확인
-# ============================================================
-
-# 이미 부트스트랩에서 설정됨. 확인:
-print(f"LANGSMITH_TRACING: {os.environ.get('LANGSMITH_TRACING')}")
-print(f"LANGSMITH_PROJECT: {os.environ.get('LANGSMITH_PROJECT')}")
-print(f"LANGSMITH_API_KEY: {'설정됨' if os.environ.get('LANGSMITH_API_KEY') else '미설정'}")
-```
+_힌트: `LANGSMITH_TRACING="true"`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT` 세 환경변수가 잘 잡혔는지 `os.environ.get(...)`로 확인하세요._
 
 !!! note "핵심 정리"
     환경변수 3개만 설정하면 LangSmith 트레이싱이 **자동으로** 활성화됩니다:
@@ -141,14 +108,7 @@ print(f"LANGSMITH_API_KEY: {'설정됨' if os.environ.get('LANGSMITH_API_KEY') e
 
 ### LangSmith Client 생성 + 프로젝트 확인
 
-```python
-# LangSmith 클라이언트
-from langsmith import Client
-ls_client = Client()
-
-# 프로젝트 확인
-print(f"\n현재 프로젝트: {os.environ['LANGSMITH_PROJECT']}")
-```
+_힌트: `from langsmith import Client`로 클라이언트를 생성하고, 현재 `LANGSMITH_PROJECT` 값을 출력해 확인하세요._
 
 ---
 
@@ -158,148 +118,19 @@ Day 3에서 만든 SQL 에이전트를 다시 구성합니다. 환경변수 설�
 
 ### 스키마 수집 함수
 
-```python
-# ============================================================
-# 2. Day 3 에이전트를 트레이싱과 함께 재구성
-# ============================================================
-import re
-from typing import TypedDict
-from langgraph.graph import StateGraph, END
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from sqlalchemy import inspect
-
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-
-# 스키마 수집
-def collect_schema(engine, tables):
-    inspector = inspect(engine)
-    parts = []
-    for table in tables:
-        columns = inspector.get_columns(table)
-        fks = inspector.get_foreign_keys(table)
-        col_lines = [f"    {c['name']} {c['type']}{'' if c['nullable'] else ' NOT NULL'}" for c in columns]
-        fk_lines = [f"    FK ({', '.join(fk['constrained_columns'])}) -> {fk['referred_table']}" for fk in fks]
-        ddl = f"CREATE TABLE {table} (\n" + ",\n".join(col_lines)
-        if fk_lines:
-            ddl += ",\n" + ",\n".join(fk_lines)
-        ddl += "\n);"
-        # COMMENT 수집
-        with engine.connect() as conn:
-            comments = conn.execute(text(f"""
-                SELECT column_name, col_description('{table}'::regclass, ordinal_position)
-                FROM information_schema.columns WHERE table_name = '{table}' ORDER BY ordinal_position
-            """)).fetchall()
-        for col_name, comment in comments:
-            if comment:
-                ddl += f"\n-- {table}.{col_name}: {comment}"
-        parts.append(ddl)
-    return "\n\n".join(parts)
-
-TABLES = ["patients", "doctors", "visits", "diagnoses", "departments"]
-SCHEMA = collect_schema(engine, TABLES)
-print(f"스키마 수집 완료: {len(TABLES)}개 테이블")
-```
+_힌트: `sqlalchemy.inspect`로 컬럼·FK를 가져와 `CREATE TABLE` 문자열을 만들고, `information_schema.columns` + `col_description`으로 COMMENT를 붙이는 `collect_schema(engine, tables)`를 작성하세요._
 
 ### AgentState + 가드레일
 
-```python
-# 상태 정의
-class AgentState(TypedDict):
-    question: str
-    sql: str
-    sql_result: str
-    error: str
-    answer: str
-    attempts: int
-
-# 가드레일 — 위험 키워드 차단
-BLOCKED = re.compile(r"\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE)\b", re.IGNORECASE)
-
-def sanitize_sql(sql):
-    m = BLOCKED.search(sql)
-    if m:
-        return "", f"보안 위반: '{m.group()}'"
-    if "LIMIT" not in sql.upper():
-        sql = sql.rstrip().rstrip(";") + "\nLIMIT 1000;"
-    return sql, ""
-```
+_힌트: `TypedDict`로 `question/sql/sql_result/error/answer/attempts` 필드를 가진 `AgentState`를 정의하고, 정규식으로 DDL/DML(`DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE`) 키워드를 차단하는 `sanitize_sql`을 만드세요._
 
 ### 노드 함수들
 
-```python
-# SQL 생성 노드
-def generate_sql(state: AgentState) -> dict:
-    err_fb = ""
-    if state.get("error"):
-        err_fb = f"\n이전 오류: {state['error']}\n실패 SQL: {state.get('sql','')}\n수정하세요."
-    prompt = ChatPromptTemplate.from_template(
-        "PostgreSQL 전문가. SELECT만. SQL만 반환.\n\n{schema}\n{err}\n\n질문: {q}\nSQL:"
-    )
-    chain = prompt | llm | StrOutputParser()
-    sql = chain.invoke({"schema": SCHEMA, "q": state["question"], "err": err_fb})
-    sql = re.sub(r"```sql\s*", "", sql)
-    sql = re.sub(r"```\s*", "", sql).strip()
-    return {"sql": sql, "attempts": state.get("attempts", 0) + 1}
-
-# SQL 실행 노드
-def run_sql(state: AgentState) -> dict:
-    safe_sql, error = sanitize_sql(state["sql"])
-    if error:
-        return {"error": error, "sql_result": ""}
-    try:
-        df = pd.read_sql(safe_sql, engine)
-        if df.empty:
-            return {"sql_result": "(결과 없음)", "error": ""}
-        return {"sql_result": df.head(50).to_markdown(index=False), "error": ""}
-    except Exception as e:
-        return {"error": f"SQL 오류: {str(e)}", "sql_result": ""}
-
-# 검증 노드
-def validate(state: AgentState) -> dict:
-    if state.get("error"):
-        return state
-    return {"error": ""}
-
-# 답변 생성 노드
-def answer(state: AgentState) -> dict:
-    if state.get("error") and state.get("attempts", 0) >= 3:
-        return {"answer": f"죄송합니다. 답변 실패.\n오류: {state['error']}"}
-    prompt = ChatPromptTemplate.from_template(
-        "결과를 한국어로 요약. 숫자 천 단위 구분.\n\n질문: {q}\nSQL: {sql}\n결과:\n{r}\n\n답변:"
-    )
-    chain = prompt | llm | StrOutputParser()
-    ans = chain.invoke({"q": state["question"], "sql": state["sql"], "r": state["sql_result"][:1500]})
-    return {"answer": ans}
-
-# 재시도 판단
-def should_retry(state: AgentState) -> str:
-    if not state.get("error"):
-        return "answer"
-    if state.get("attempts", 0) >= 3:
-        return "answer"
-    return "generate_sql"
-```
+_힌트: Day 3과 동일하게 `generate_sql` (프롬프트→LLM→파싱), `run_sql` (`sanitize_sql`+`pd.read_sql`), `validate`, `answer` (결과 요약 프롬프트), `should_retry` (조건부 분기) 5개 노드를 작성하세요._
 
 ### 그래프 조립
 
-```python
-# 그래프 조립
-graph = StateGraph(AgentState)
-graph.add_node("generate_sql", generate_sql)
-graph.add_node("run_sql", run_sql)
-graph.add_node("validate", validate)
-graph.add_node("answer", answer)
-graph.set_entry_point("generate_sql")
-graph.add_edge("generate_sql", "run_sql")
-graph.add_edge("run_sql", "validate")
-graph.add_conditional_edges("validate", should_retry)
-graph.add_edge("answer", END)
-
-agent = graph.compile()
-print("에이전트 컴파일 완료 -- LangSmith 트레이싱 활성화됨!")
-```
+_힌트: `StateGraph(AgentState)`로 4개 노드를 추가하고 `generate_sql → run_sql → validate`로 엣지를 연결, `validate`에 `should_retry` 조건부 엣지를 걸어 `compile()` 하세요._
 
 ---
 
@@ -307,46 +138,7 @@ print("에이전트 컴파일 완료 -- LangSmith 트레이싱 활성화됨!")
 
 모든 실행이 LangSmith에 자동으로 기록됩니다. 실행 후 LangSmith UI에서 트레이스를 확인하세요.
 
-```python
-# ============================================================
-# 3. 10개 질문 실행 — 모든 실행이 LangSmith에 기록됨
-# ============================================================
-
-questions = [
-    "전체 환자 수는?",
-    "남성 환자 중 40세 이상은 몇 명?",
-    "진료과별 의사 수를 보여줘",
-    "지난달 완료 진료 건수는?",
-    "응급 진료 평균 비용은?",
-    "가장 많이 방문한 환자 Top 3는?",
-    "중증 진단을 받은 환자 이름은?",
-    "2026년 월별 방문 수 추이는?",
-    "내과 의사 중 급여 최고는?",
-    "혈액형별 환자 분포는?",
-]
-
-results = []
-for i, q in enumerate(questions):
-    print(f"\n[{i+1}/10] {q}")
-    result = agent.invoke({"question": q, "attempts": 0})
-    status = "O" if result.get("answer") and "죄송" not in result.get("answer", "") else "X"
-    results.append({
-        "question": q,
-        "status": status,
-        "attempts": result.get("attempts", 0),
-        "sql": result.get("sql", ""),
-        "answer": result.get("answer", ""),
-        "sql_result": result.get("sql_result", ""),
-    })
-    print(f"  {status} (시도 {result.get('attempts',0)}회) -- {result.get('answer','')[:60]}...")
-
-# 요약
-df_results = pd.DataFrame(results)
-success = len(df_results[df_results["status"] == "O"])
-print(f"\n정답률: {success}/{len(questions)} ({success/len(questions)*100:.0f}%)")
-print(f"\nLangSmith에서 확인: https://smith.langchain.com/")
-print(f"   프로젝트: {os.environ['LANGSMITH_PROJECT']}")
-```
+_힌트: 10개 질문 리스트를 순회하며 `agent.invoke({"question": q, "attempts": 0})`를 호출하고, question/status/attempts/sql/answer/sql_result를 `results` 리스트에 모은 뒤 정답률을 출력하세요._
 
 ---
 
@@ -354,65 +146,7 @@ print(f"   프로젝트: {os.environ['LANGSMITH_PROJECT']}")
 
 ### 토큰/비용/지연 분석
 
-```python
-# ============================================================
-# 4. LangSmith API로 트레이스 분석
-# ============================================================
-from langsmith import Client
-import matplotlib.pyplot as plt
-
-ls = Client()
-
-# 최근 실행 가져오기 — root run만 (is_root=True 가 최신 SDK 표준)
-runs = list(ls.list_runs(
-    project_name=os.environ["LANGSMITH_PROJECT"],
-    is_root=True,
-    limit=10,
-))
-
-print(f"최근 {len(runs)}개 트레이스 분석:\n")
-
-def _token_usage(run):
-    """LangSmith run에서 토큰 사용량을 방어적으로 추출.
-
-    최신 SDK는 `run.total_tokens` 등 상위 속성이 None인 경우가 많음.
-    우선 최상위 필드를 보고, 없으면 `run.extra['runtime']['token_usage']`
-    또는 `run.outputs['llm_output']['token_usage']` 를 차례로 확인한다.
-    """
-    total = getattr(run, "total_tokens", None)
-    prompt = getattr(run, "prompt_tokens", None)
-    completion = getattr(run, "completion_tokens", None)
-    if not total:
-        extra = (run.extra or {}).get("runtime", {}).get("token_usage", {}) or {}
-        prompt = prompt or extra.get("prompt_tokens", 0)
-        completion = completion or extra.get("completion_tokens", 0)
-        total = extra.get("total_tokens", (prompt or 0) + (completion or 0))
-    return (total or 0), (prompt or 0), (completion or 0)
-
-trace_stats = []
-for run in runs:
-    total_tokens, prompt_tokens, completion_tokens = _token_usage(run)
-    latency = (run.end_time - run.start_time).total_seconds() if run.end_time and run.start_time else 0
-
-    # 비용 추정 (gpt-4o-mini 기준)
-    cost = (prompt_tokens * 0.15 + completion_tokens * 0.6) / 1_000_000
-
-    trace_stats.append({
-        "question": (run.inputs or {}).get("question", "?")[:30],
-        "tokens": total_tokens,
-        "latency_s": round(latency, 2),
-        "cost_usd": round(cost, 6),
-        "status": run.status,
-    })
-
-df_traces = pd.DataFrame(trace_stats)
-print(df_traces.to_string(index=False))
-
-print(f"\n합계:")
-print(f"  총 토큰: {df_traces['tokens'].sum():,}")
-print(f"  평균 지연: {df_traces['latency_s'].mean():.2f}초")
-print(f"  총 비용: ${df_traces['cost_usd'].sum():.4f}")
-```
+_힌트: `Client().list_runs(project_name=..., is_root=True, limit=10)`로 root run을 가져오고, 각 run의 `total_tokens`/`extra["runtime"]["token_usage"]`에서 토큰을 방어적으로 추출하여 토큰·지연(`end_time-start_time`)·비용을 DataFrame으로 정리하세요._
 
 !!! note "핵심 정리"
     `list_runs()`의 `is_root=True` 옵션은 **root run만** 가져옵니다 (`langsmith>=0.1.70`). 이는 하위 노드 Run이 아닌, 에이전트 전체 실행 단위의 Trace를 의미합니다. 개별 노드의 세부 정보는 LangSmith UI의 Run Tree에서 확인하거나, `is_root` 를 생략하여 모든 Run을 가져올 수 있습니다.
@@ -422,33 +156,7 @@ print(f"  총 비용: ${df_traces['cost_usd'].sum():.4f}")
 
 ### 시각화 -- 질문별 토큰/지연 2-패널 차트
 
-```python
-# ============================================================
-# 5. 시각화 — 질문별 토큰/지연 차트
-# ============================================================
-fig, axes = plt.subplots(1, 2, figsize=(14, 5))
-
-# 토큰 사용량
-axes[0].barh(range(len(df_traces)), df_traces["tokens"], color="steelblue")
-axes[0].set_yticks(range(len(df_traces)))
-axes[0].set_yticklabels(df_traces["question"], fontsize=8)
-axes[0].set_xlabel("Total Tokens")
-axes[0].set_title("Tokens per Question")
-axes[0].invert_yaxis()
-
-# 지연 시간
-axes[1].barh(range(len(df_traces)), df_traces["latency_s"], color="coral")
-axes[1].set_yticks(range(len(df_traces)))
-axes[1].set_yticklabels(df_traces["question"], fontsize=8)
-axes[1].set_xlabel("Latency (seconds)")
-axes[1].set_title("Latency per Question")
-axes[1].invert_yaxis()
-
-plt.tight_layout()
-plt.savefig("langsmith_stats.png", dpi=150, bbox_inches="tight")
-plt.show()
-print("차트 저장: langsmith_stats.png")
-```
+_힌트: `matplotlib`의 `subplots(1, 2)`와 `barh`로 좌측에 토큰, 우측에 지연 시간을 가로 막대 차트로 그리고 `savefig`로 PNG 저장하세요._
 
 !!! example "실습 -- 가장 느린 질문의 트레이스 열어 병목 찾기"
     1. 위 차트에서 **지연 시간이 가장 긴 질문**을 확인합니다.
@@ -469,48 +177,7 @@ print("차트 저장: langsmith_stats.png")
 
 LangSmith Dataset은 질문(input)과 기대 답변(output)의 쌍입니다. 22H Ragas 평가에서 ground truth로 사용됩니다.
 
-```python
-# ============================================================
-# 6. 평가용 Dataset 생성
-# ============================================================
-
-dataset_name = "sql-agent-eval-10q"
-
-# 기존 동명 데이터셋이 있으면 삭제 후 재생성
-try:
-    existing = ls.read_dataset(dataset_name=dataset_name)
-    ls.delete_dataset(dataset_id=existing.id)
-except:
-    pass
-
-dataset = ls.create_dataset(
-    dataset_name=dataset_name,
-    description="SQL 에이전트 10개 질문 평가용 데이터셋",
-)
-
-# 질문 + 기대 결과(ground truth) 등록
-ground_truths = [
-    {"question": "전체 환자 수는?", "ground_truth": "30명"},
-    {"question": "남성 환자 중 40세 이상은 몇 명?", "ground_truth": "7명 이상"},
-    {"question": "진료과별 의사 수를 보여줘", "ground_truth": "8개 진료과, 각 2~3명"},
-    {"question": "지난달 완료 진료 건수는?", "ground_truth": "날짜에 따라 다름"},
-    {"question": "응급 진료 평균 비용은?", "ground_truth": "약 300,000원"},
-    {"question": "가장 많이 방문한 환자 Top 3는?", "ground_truth": "홍길동, 이준석 등"},
-    {"question": "중증 진단을 받은 환자 이름은?", "ground_truth": "급성 충수염, 뇌진탕 등 severe 진단"},
-    {"question": "2026년 월별 방문 수 추이는?", "ground_truth": "1~4월 데이터"},
-    {"question": "내과 의사 중 급여 최고는?", "ground_truth": "김철수 8,500,000원"},
-    {"question": "혈액형별 환자 분포는?", "ground_truth": "A, B, O, AB 각각 수"},
-]
-
-for gt in ground_truths:
-    ls.create_example(
-        inputs={"question": gt["question"]},
-        outputs={"ground_truth": gt["ground_truth"]},
-        dataset_id=dataset.id,
-    )
-
-print(f"Dataset '{dataset_name}' 생성 완료 ({len(ground_truths)}개 예시)")
-```
+_힌트: `ls.create_dataset(dataset_name=...)`으로 데이터셋을 만들고, 질문/정답 쌍 10개를 `ls.create_example(inputs=..., outputs=..., dataset_id=...)`로 등록하세요. 동명 데이터셋이 있으면 `read_dataset` + `delete_dataset`으로 먼저 정리하면 됩니다._
 
 !!! tip "Dataset 활용 팁"
     Dataset은 단순히 저장만 하는 것이 아닙니다. LangSmith UI에서:
@@ -526,44 +193,7 @@ print(f"Dataset '{dataset_name}' 생성 완료 ({len(ground_truths)}개 예시)"
 
 실행 결과에 정답/오답 태그를 붙여 LangSmith에서 필터링하고 분석할 수 있습니다.
 
-```python
-# ============================================================
-# 7. 실행 결과에 Feedback(태깅) 부여
-# ============================================================
-
-# 최근 실행에 대해 정답/오답 태깅
-# ⚠️ list_runs()는 기본적으로 최신→과거 역순입니다.
-#    results(질문 순서)와 그냥 zip하면 엉뚱한 run에 feedback이 붙습니다.
-#    반드시 start_time 오름차순으로 정렬하거나, 질문 문자열로 매칭하세요.
-runs = list(ls.list_runs(
-    project_name=os.environ["LANGSMITH_PROJECT"],
-    is_root=True,
-    limit=len(results),
-))
-runs_sorted = sorted(runs, key=lambda r: r.start_time)  # 오래된 순 → 질문 순서와 일치
-
-# 더 안전한 매칭: 질문 문자열로 run을 찾는다
-runs_by_question = {
-    (r.inputs or {}).get("question"): r for r in runs_sorted
-}
-
-for res in results:
-    run = runs_by_question.get(res["question"])
-    if run is None:
-        print(f"  (건너뜀) 매칭되는 run 없음: {res['question'][:30]}...")
-        continue
-    score = 1.0 if res["status"] == "O" else 0.0
-    ls.create_feedback(
-        run_id=run.id,
-        key="correctness",
-        score=score,
-        comment=f"질문: {res['question'][:30]}... -> {res['status']}",
-    )
-    print(f"  Feedback: {res['question'][:30]}... -> score={score}")
-
-print(f"\n{len(runs_by_question)}개 실행에 Feedback 부여 완료!")
-print("   LangSmith UI에서 Feedback 필터로 실패 케이스를 빠르게 확인하세요.")
-```
+_힌트: `list_runs(is_root=True)`는 최신→과거 역순이므로 `start_time`으로 정렬하거나 질문 문자열로 매칭한 뒤, 각 run에 `ls.create_feedback(run_id=..., key="correctness", score=1.0 또는 0.0, comment=...)`로 정답/오답 태그를 부여하세요._
 
 !!! tip "Feedback 활용법"
     Feedback을 부여하면 LangSmith UI에서 강력한 필터링이 가능합니다:

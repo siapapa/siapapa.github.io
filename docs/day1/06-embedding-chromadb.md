@@ -56,69 +56,75 @@ cos(A, B) = (A · B) / (||A|| x ||B||)
 
 ### 패키지 설치
 
-```python
-!pip install -q \
-    llama-index llama-index-embeddings-openai llama-index-llms-openai \
-    llama-index-vector-stores-chroma \
-    chromadb \
-    numpy matplotlib scikit-learn
+??? success "정답 보기"
 
-import os
-from google.colab import userdata
-os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
-```
+    ```python
+    !pip install -q \
+        llama-index llama-index-embeddings-openai llama-index-llms-openai \
+        llama-index-vector-stores-chroma \
+        chromadb \
+        numpy matplotlib scikit-learn
+
+    import os
+    from google.colab import userdata
+    os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
+    ```
 
 ### 임베딩 함수 정의
 
-```python
-from openai import OpenAI
-import numpy as np
+??? success "정답 보기"
 
-client = OpenAI()
+    ```python
+    from openai import OpenAI
+    import numpy as np
 
-def get_embedding(text: str) -> list[float]:
-    """텍스트를 임베딩 벡터로 변환"""
-    response = client.embeddings.create(
-        input=text,
-        model="text-embedding-3-small"
-    )
-    return response.data[0].embedding
+    client = OpenAI()
 
-def cosine_similarity(a: list, b: list) -> float:
-    """두 벡터의 코사인 유사도"""
-    a, b = np.array(a), np.array(b)
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-```
+    def get_embedding(text: str) -> list[float]:
+        """텍스트를 임베딩 벡터로 변환"""
+        response = client.embeddings.create(
+            input=text,
+            model="text-embedding-3-small"
+        )
+        return response.data[0].embedding
+
+    def cosine_similarity(a: list, b: list) -> float:
+        """두 벡터의 코사인 유사도"""
+        a, b = np.array(a), np.array(b)
+        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+    ```
 
 ### 5개 문장 유사도 매트릭스 실험
 
-```python
-# 테스트 문장 5개
-sentences = [
-    "환자가 심한 두통을 호소합니다",
-    "머리가 깨질 듯이 아파요",
-    "복부에 통증이 있습니다",
-    "오늘 서울 날씨가 맑습니다",
-    "내일 비가 올 예정입니다",
-]
+??? success "정답 보기"
 
-# 임베딩 생성
-embeddings = [get_embedding(s) for s in sentences]
+    ```python
+    # 테스트 문장 5개
+    sentences = [
+        "환자가 심한 두통을 호소합니다",
+        "머리가 깨질 듯이 아파요",
+        "복부에 통증이 있습니다",
+        "오늘 서울 날씨가 맑습니다",
+        "내일 비가 올 예정입니다",
+    ]
 
-print(f"임베딩 차원: {len(embeddings[0])}")
-print(f"\n📊 유사도 행렬:")
-print(f"{'':>5}", end="")
-for i in range(len(sentences)):
-    print(f"  [{i}]", end="")
-print()
+    # 임베딩 생성
+    embeddings = [get_embedding(s) for s in sentences]
 
-for i in range(len(sentences)):
-    print(f"[{i}]", end="")
-    for j in range(len(sentences)):
-        sim = cosine_similarity(embeddings[i], embeddings[j])
-        print(f"  {sim:.2f}", end="")
-    print(f"  ← {sentences[i][:20]}")
-```
+    print(f"임베딩 차원: {len(embeddings[0])}")
+    print(f"\n📊 유사도 행렬:")
+    print(f"{'':>5}", end="")
+    for i in range(len(sentences)):
+        print(f"  [{i}]", end="")
+    print()
+
+    for i in range(len(sentences)):
+        print(f"[{i}]", end="")
+        for j in range(len(sentences)):
+            sim = cosine_similarity(embeddings[i], embeddings[j])
+            print(f"  {sim:.2f}", end="")
+        print(f"  ← {sentences[i][:20]}")
+    ```
 
 !!! note "핵심 정리"
     기대 결과 해석:
@@ -130,36 +136,38 @@ for i in range(len(sentences)):
 
 ### 유사도 히트맵 시각화
 
-```python
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+??? success "정답 보기"
 
-# 유사도 행렬 계산
-n = len(sentences)
-sim_matrix = np.zeros((n, n))
-for i in range(n):
-    for j in range(n):
-        sim_matrix[i][j] = cosine_similarity(embeddings[i], embeddings[j])
+    ```python
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 
-fig, ax = plt.subplots(figsize=(8, 6))
-im = ax.imshow(sim_matrix, cmap='YlOrRd', vmin=0, vmax=1)
-plt.colorbar(im)
+    # 유사도 행렬 계산
+    n = len(sentences)
+    sim_matrix = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            sim_matrix[i][j] = cosine_similarity(embeddings[i], embeddings[j])
 
-labels = [s[:15] + "..." for s in sentences]
-ax.set_xticks(range(n))
-ax.set_yticks(range(n))
-ax.set_xticklabels(range(n))
-ax.set_yticklabels(labels)
+    fig, ax = plt.subplots(figsize=(8, 6))
+    im = ax.imshow(sim_matrix, cmap='YlOrRd', vmin=0, vmax=1)
+    plt.colorbar(im)
 
-for i in range(n):
-    for j in range(n):
-        ax.text(j, i, f"{sim_matrix[i][j]:.2f}", ha="center", va="center", fontsize=10)
+    labels = [s[:15] + "..." for s in sentences]
+    ax.set_xticks(range(n))
+    ax.set_yticks(range(n))
+    ax.set_xticklabels(range(n))
+    ax.set_yticklabels(labels)
 
-plt.title("Cosine Similarity Matrix")
-plt.tight_layout()
-plt.show()
-```
+    for i in range(n):
+        for j in range(n):
+            ax.text(j, i, f"{sim_matrix[i][j]:.2f}", ha="center", va="center", fontsize=10)
+
+    plt.title("Cosine Similarity Matrix")
+    plt.tight_layout()
+    plt.show()
+    ```
 
 ---
 
@@ -244,92 +252,100 @@ t-SNE 축소 후: 2차원 공간
 
 ### ChromaDB 저장소 생성
 
-```python
-import chromadb
+??? success "정답 보기"
 
-# PersistentClient: 데이터가 디스크에 저장됨
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
+    ```python
+    import chromadb
 
-# 컬렉션 생성 (또는 기존 컬렉션 로드)
-collection = chroma_client.get_or_create_collection(
-    name="hospital_docs",
-    metadata={"hnsw:space": "cosine"}  # 코사인 유사도 사용
-)
+    # PersistentClient: 데이터가 디스크에 저장됨
+    chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
-print(f"✅ ChromaDB 컬렉션 생성: {collection.name}")
-print(f"   기존 문서 수: {collection.count()}")
-```
+    # 컬렉션 생성 (또는 기존 컬렉션 로드)
+    collection = chroma_client.get_or_create_collection(
+        name="hospital_docs",
+        metadata={"hnsw:space": "cosine"}  # 코사인 유사도 사용
+    )
+
+    print(f"✅ ChromaDB 컬렉션 생성: {collection.name}")
+    print(f"   기존 문서 수: {collection.count()}")
+    ```
 
 ### 문서 추가
 
-```python
-# 병원 문서들을 ChromaDB에 직접 저장
-documents = [
-    "서울중앙병원 내과에는 김철수(심장), 이영희(호흡기), 신민아(소화기) 전문의가 있습니다.",
-    "외과는 박민수(일반외과), 정수진(흉부외과), 권혁준(혈관외과)이 근무합니다.",
-    "진료 시간은 평일 09:00-18:00, 토요일 09:00-13:00입니다.",
-    "응급실은 24시간 운영되며, 야간 당직의가 상주합니다.",
-    "입원 병실은 1인실(25만원/일), 2인실(15만원/일), 4인실(8만원/일)입니다.",
-    "외래 환자 주차는 3시간 무료이며, 이후 30분당 1,000원입니다.",
-    "진단서 발급은 1층 제증명 창구에서 가능하며, 소요 시간은 약 30분입니다.",
-    "소아과에는 최동현, 강미래, 문서영 전문의가 소아청소년 질환을 진료합니다.",
-]
+??? success "정답 보기"
 
-metadatas = [
-    {"section": "내과", "doc_type": "department"},
-    {"section": "외과", "doc_type": "department"},
-    {"section": "진료시간", "doc_type": "guide"},
-    {"section": "응급실", "doc_type": "guide"},
-    {"section": "입원", "doc_type": "guide"},
-    {"section": "주차", "doc_type": "guide"},
-    {"section": "제증명", "doc_type": "guide"},
-    {"section": "소아과", "doc_type": "department"},
-]
+    ```python
+    # 병원 문서들을 ChromaDB에 직접 저장
+    documents = [
+        "서울중앙병원 내과에는 김철수(심장), 이영희(호흡기), 신민아(소화기) 전문의가 있습니다.",
+        "외과는 박민수(일반외과), 정수진(흉부외과), 권혁준(혈관외과)이 근무합니다.",
+        "진료 시간은 평일 09:00-18:00, 토요일 09:00-13:00입니다.",
+        "응급실은 24시간 운영되며, 야간 당직의가 상주합니다.",
+        "입원 병실은 1인실(25만원/일), 2인실(15만원/일), 4인실(8만원/일)입니다.",
+        "외래 환자 주차는 3시간 무료이며, 이후 30분당 1,000원입니다.",
+        "진단서 발급은 1층 제증명 창구에서 가능하며, 소요 시간은 약 30분입니다.",
+        "소아과에는 최동현, 강미래, 문서영 전문의가 소아청소년 질환을 진료합니다.",
+    ]
 
-# Upsert (있으면 업데이트, 없으면 추가)
-collection.upsert(
-    ids=[f"doc_{i}" for i in range(len(documents))],
-    documents=documents,
-    metadatas=metadatas,
-)
+    metadatas = [
+        {"section": "내과", "doc_type": "department"},
+        {"section": "외과", "doc_type": "department"},
+        {"section": "진료시간", "doc_type": "guide"},
+        {"section": "응급실", "doc_type": "guide"},
+        {"section": "입원", "doc_type": "guide"},
+        {"section": "주차", "doc_type": "guide"},
+        {"section": "제증명", "doc_type": "guide"},
+        {"section": "소아과", "doc_type": "department"},
+    ]
 
-print(f"✅ {len(documents)}개 문서 저장 완료 (총 {collection.count()}개)")
-```
+    # Upsert (있으면 업데이트, 없으면 추가)
+    collection.upsert(
+        ids=[f"doc_{i}" for i in range(len(documents))],
+        documents=documents,
+        metadatas=metadatas,
+    )
+
+    print(f"✅ {len(documents)}개 문서 저장 완료 (총 {collection.count()}개)")
+    ```
 
 ### ChromaDB 검색
 
-```python
-# 유사도 검색
-results = collection.query(
-    query_texts=["내과 의사가 누구인가요?"],
-    n_results=3,
-)
+??? success "정답 보기"
 
-print("🔍 검색: '내과 의사가 누구인가요?'\n")
-for i, (doc, meta, dist) in enumerate(zip(
-    results["documents"][0],
-    results["metadatas"][0],
-    results["distances"][0]
-)):
-    similarity = 1 - dist  # ChromaDB는 distance를 반환 → similarity로 변환
-    print(f"  [{i+1}] 유사도={similarity:.3f} | 섹션={meta['section']}")
-    print(f"      {doc}")
-```
+    ```python
+    # 유사도 검색
+    results = collection.query(
+        query_texts=["내과 의사가 누구인가요?"],
+        n_results=3,
+    )
+
+    print("🔍 검색: '내과 의사가 누구인가요?'\n")
+    for i, (doc, meta, dist) in enumerate(zip(
+        results["documents"][0],
+        results["metadatas"][0],
+        results["distances"][0]
+    )):
+        similarity = 1 - dist  # ChromaDB는 distance를 반환 → similarity로 변환
+        print(f"  [{i+1}] 유사도={similarity:.3f} | 섹션={meta['section']}")
+        print(f"      {doc}")
+    ```
 
 ### 메타데이터 필터링 검색
 
-```python
-# doc_type이 "department"인 문서만 검색
-results_filtered = collection.query(
-    query_texts=["의사 정보를 알려주세요"],
-    n_results=5,
-    where={"doc_type": "department"},  # department 타입만 검색
-)
+??? success "정답 보기"
 
-print("\n🔍 필터 검색: doc_type='department'\n")
-for doc, meta in zip(results_filtered["documents"][0], results_filtered["metadatas"][0]):
-    print(f"  [{meta['section']}] {doc}")
-```
+    ```python
+    # doc_type이 "department"인 문서만 검색
+    results_filtered = collection.query(
+        query_texts=["의사 정보를 알려주세요"],
+        n_results=5,
+        where={"doc_type": "department"},  # department 타입만 검색
+    )
+
+    print("\n🔍 필터 검색: doc_type='department'\n")
+    for doc, meta in zip(results_filtered["documents"][0], results_filtered["metadatas"][0]):
+        print(f"  [{meta['section']}] {doc}")
+    ```
 
 ---
 
@@ -338,70 +354,78 @@ for doc, meta in zip(results_filtered["documents"][0], results_filtered["metadat
 LlamaIndex의 VectorStoreIndex와 ChromaDB를 연결하면
 LlamaIndex의 편리한 Query Engine + ChromaDB의 영속 저장을 함께 활용할 수 있습니다.
 
-```python
-from llama_index.core import VectorStoreIndex, StorageContext, Document, Settings
-from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.llms.openai import OpenAI
+??? success "정답 보기"
 
-Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0)
-Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+    ```python
+    from llama_index.core import VectorStoreIndex, StorageContext, Document, Settings
+    from llama_index.vector_stores.chroma import ChromaVectorStore
+    from llama_index.embeddings.openai import OpenAIEmbedding
+    from llama_index.llms.openai import OpenAI
 
-# ChromaDB 컬렉션을 LlamaIndex 벡터스토어로 래핑
-chroma_collection = chroma_client.get_or_create_collection("hospital_llamaindex")
-vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-storage_context = StorageContext.from_defaults(vector_store=vector_store)
+    Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0)
+    Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
 
-# LlamaIndex 문서 → ChromaDB에 인덱싱
-li_docs = [
-    Document(text=doc, metadata=meta)
-    for doc, meta in zip(documents, metadatas)
-]
+    # ChromaDB 컬렉션을 LlamaIndex 벡터스토어로 래핑
+    chroma_collection = chroma_client.get_or_create_collection("hospital_llamaindex")
+    vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
+    storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-index = VectorStoreIndex.from_documents(
-    li_docs,
-    storage_context=storage_context,
-    show_progress=True,
-)
+    # LlamaIndex 문서 → ChromaDB에 인덱싱
+    li_docs = [
+        Document(text=doc, metadata=meta)
+        for doc, meta in zip(documents, metadatas)
+    ]
 
-print(f"✅ LlamaIndex + ChromaDB 인덱싱 완료!")
-```
+    index = VectorStoreIndex.from_documents(
+        li_docs,
+        storage_context=storage_context,
+        show_progress=True,
+    )
+
+    print(f"✅ LlamaIndex + ChromaDB 인덱싱 완료!")
+    ```
 
 ### 질의 테스트
 
-```python
-# Query Engine으로 질의
-query_engine = index.as_query_engine(similarity_top_k=3)
+??? success "정답 보기"
 
-response = query_engine.query("응급실 이용 가능한 시간은?")
-print(f"💬 답변: {response.response}")
-print(f"\n📚 참조:")
-for node in response.source_nodes:
-    print(f"  - score={node.score:.3f}: {node.text[:60]}...")
-```
+    ```python
+    # Query Engine으로 질의
+    query_engine = index.as_query_engine(similarity_top_k=3)
+
+    response = query_engine.query("응급실 이용 가능한 시간은?")
+    print(f"💬 답변: {response.response}")
+    print(f"\n📚 참조:")
+    for node in response.source_nodes:
+        print(f"  - score={node.score:.3f}: {node.text[:60]}...")
+    ```
 
 ### Top-K 검색 실습
 
-```python
-# Top-K 값에 따른 결과 비교
-for k in [1, 3, 5]:
-    qe = index.as_query_engine(similarity_top_k=k)
-    resp = qe.query("주차 요금이 어떻게 되나요?")
-    print(f"\n--- similarity_top_k={k} ---")
-    print(f"💬 답변: {resp.response}")
-    print(f"   참조 문서 수: {len(resp.source_nodes)}")
-```
+??? success "정답 보기"
+
+    ```python
+    # Top-K 값에 따른 결과 비교
+    for k in [1, 3, 5]:
+        qe = index.as_query_engine(similarity_top_k=k)
+        resp = qe.query("주차 요금이 어떻게 되나요?")
+        print(f"\n--- similarity_top_k={k} ---")
+        print(f"💬 답변: {resp.response}")
+        print(f"   참조 문서 수: {len(resp.source_nodes)}")
+    ```
 
 ### 영속성 확인
 
-```python
-# 세션 재시작 후에도 데이터 유지 확인
-chroma_client2 = chromadb.PersistentClient(path="./chroma_db")
-collection2 = chroma_client2.get_collection("hospital_docs")
+??? success "정답 보기"
 
-print(f"✅ 재접속 후 문서 수: {collection2.count()}")
-# → 세션이 끊겨도 ./chroma_db 폴더에 데이터가 남아있음!
-```
+    ```python
+    # 세션 재시작 후에도 데이터 유지 확인
+    chroma_client2 = chromadb.PersistentClient(path="./chroma_db")
+    collection2 = chroma_client2.get_collection("hospital_docs")
+
+    print(f"✅ 재접속 후 문서 수: {collection2.count()}")
+    # → 세션이 끊겨도 ./chroma_db 폴더에 데이터가 남아있음!
+    ```
 
 ---
 

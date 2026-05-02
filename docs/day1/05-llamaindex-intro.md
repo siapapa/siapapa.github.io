@@ -80,37 +80,41 @@ Documents  →  Nodes(Chunks)  →  Embeddings  →  Index  →  QueryEngine
 
 ### Step 0: 패키지 설치
 
-```python
-!pip install -q llama-index llama-index-llms-openai llama-index-embeddings-openai
+??? success "정답 보기"
 
-import os
-from google.colab import userdata
-os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
-```
+    ```python
+    !pip install -q llama-index llama-index-llms-openai llama-index-embeddings-openai
+
+    import os
+    from google.colab import userdata
+    os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
+    ```
 
 ### Step 1: Settings 객체 — 전역 설정
 
-```python
-from llama_index.core import Settings
-from llama_index.llms.openai import OpenAI
-from llama_index.embeddings.openai import OpenAIEmbedding
+??? success "정답 보기"
 
-# 전역 LLM 설정 (모든 쿼리에서 사용)
-Settings.llm = OpenAI(
-    model="gpt-4o-mini",
-    temperature=0,          # 결정적 출력 (일관된 결과)
-    max_tokens=1024,
-)
+    ```python
+    from llama_index.core import Settings
+    from llama_index.llms.openai import OpenAI
+    from llama_index.embeddings.openai import OpenAIEmbedding
 
-# 전역 임베딩 모델 설정 (모든 인덱싱/검색에서 사용)
-Settings.embed_model = OpenAIEmbedding(
-    model="text-embedding-3-small",  # 빠르고 저렴
-    # model="text-embedding-3-large",  # 더 정확하지만 비용 ↑
-)
+    # 전역 LLM 설정 (모든 쿼리에서 사용)
+    Settings.llm = OpenAI(
+        model="gpt-4o-mini",
+        temperature=0,          # 결정적 출력 (일관된 결과)
+        max_tokens=1024,
+    )
 
-print(f"✅ LLM: {Settings.llm.model}")
-print(f"✅ Embedding: {Settings.embed_model.model_name}")
-```
+    # 전역 임베딩 모델 설정 (모든 인덱싱/검색에서 사용)
+    Settings.embed_model = OpenAIEmbedding(
+        model="text-embedding-3-small",  # 빠르고 저렴
+        # model="text-embedding-3-large",  # 더 정확하지만 비용 ↑
+    )
+
+    print(f"✅ LLM: {Settings.llm.model}")
+    print(f"✅ Embedding: {Settings.embed_model.model_name}")
+    ```
 
 !!! note "핵심 정리"
     `Settings` 객체는 LlamaIndex 전역 설정입니다.
@@ -121,75 +125,77 @@ print(f"✅ Embedding: {Settings.embed_model.model_name}")
 
 ### Step 2: Document 로딩 — 병원 안내 문서 4종
 
-```python
-from llama_index.core import Document
+??? success "정답 보기"
 
-# 병원 관련 문서를 직접 생성 (실습용)
-hospital_docs = [
-    Document(
-        text="""
-        서울중앙병원 진료 안내
-        
-        진료 시간: 평일 09:00-18:00, 토요일 09:00-13:00
-        점심 시간: 12:30-13:30
-        응급실: 24시간 운영
-        
-        외래 진료 예약은 전화(02-1234-5678) 또는 온라인으로 가능합니다.
-        초진 환자는 신분증을 지참해 주세요.
-        """,
-        metadata={"source": "hospital_guide", "section": "진료안내", "doc_type": "guide"}
-    ),
-    Document(
-        text="""
-        진료과 소개
-        
-        내과: 심장, 호흡기, 소화기 질환을 전문으로 합니다. 김철수, 이영희, 신민아 전문의가 진료합니다.
-        외과: 일반외과, 흉부외과, 혈관외과를 운영합니다. 박민수, 정수진, 권혁준 전문의가 근무합니다.
-        소아과: 소아청소년과와 신생아과로 구성되어 있으며, 최동현, 강미래, 문서영 전문의가 있습니다.
-        정형외과: 척추, 관절 질환을 전문으로 하며, 윤성호, 한지은 전문의가 진료합니다.
-        """,
-        metadata={"source": "hospital_guide", "section": "진료과소개", "doc_type": "guide"}
-    ),
-    Document(
-        text="""
-        입원 안내
-        
-        입원 절차:
-        1. 담당 의사의 입원 결정
-        2. 원무과에서 입원 수속 (보험증, 신분증 필요)
-        3. 병동 배정 및 입실
-        
-        병실 종류:
-        - 1인실: 250,000원/일
-        - 2인실: 150,000원/일  
-        - 4인실: 80,000원/일
-        - 다인실: 건강보험 적용
-        
-        면회 시간: 매일 18:00-20:00
-        """,
-        metadata={"source": "hospital_guide", "section": "입원안내", "doc_type": "guide"}
-    ),
-    Document(
-        text="""
-        자주 묻는 질문 (FAQ)
-        
-        Q: 진료비 수납은 어떻게 하나요?
-        A: 진료 후 1층 수납 창구 또는 무인 수납기를 이용해 주세요. 카드, 현금, 계좌이체 가능합니다.
-        
-        Q: 진단서 발급은 어떻게 하나요?
-        A: 1층 제증명 창구에서 신청하실 수 있습니다. 신분증 지참 필수이며, 발급 소요 시간은 약 30분입니다.
-        
-        Q: 주차 요금은 얼마인가요?
-        A: 외래 환자 3시간 무료, 이후 30분당 1,000원입니다. 입원 환자 보호자는 1일 5,000원입니다.
-        """,
-        metadata={"source": "hospital_guide", "section": "FAQ", "doc_type": "faq"}
-    ),
-]
+    ```python
+    from llama_index.core import Document
 
-print(f"✅ 로드된 문서 수: {len(hospital_docs)}")
-for doc in hospital_docs:
-    print(f"  - [{doc.metadata['section']}] {doc.text[:50].strip()}...")
-```
+    # 병원 관련 문서를 직접 생성 (실습용)
+    hospital_docs = [
+        Document(
+            text="""
+            서울중앙병원 진료 안내
+            
+            진료 시간: 평일 09:00-18:00, 토요일 09:00-13:00
+            점심 시간: 12:30-13:30
+            응급실: 24시간 운영
+            
+            외래 진료 예약은 전화(02-1234-5678) 또는 온라인으로 가능합니다.
+            초진 환자는 신분증을 지참해 주세요.
+            """,
+            metadata={"source": "hospital_guide", "section": "진료안내", "doc_type": "guide"}
+        ),
+        Document(
+            text="""
+            진료과 소개
+            
+            내과: 심장, 호흡기, 소화기 질환을 전문으로 합니다. 김철수, 이영희, 신민아 전문의가 진료합니다.
+            외과: 일반외과, 흉부외과, 혈관외과를 운영합니다. 박민수, 정수진, 권혁준 전문의가 근무합니다.
+            소아과: 소아청소년과와 신생아과로 구성되어 있으며, 최동현, 강미래, 문서영 전문의가 있습니다.
+            정형외과: 척추, 관절 질환을 전문으로 하며, 윤성호, 한지은 전문의가 진료합니다.
+            """,
+            metadata={"source": "hospital_guide", "section": "진료과소개", "doc_type": "guide"}
+        ),
+        Document(
+            text="""
+            입원 안내
+            
+            입원 절차:
+            1. 담당 의사의 입원 결정
+            2. 원무과에서 입원 수속 (보험증, 신분증 필요)
+            3. 병동 배정 및 입실
+            
+            병실 종류:
+            - 1인실: 250,000원/일
+            - 2인실: 150,000원/일  
+            - 4인실: 80,000원/일
+            - 다인실: 건강보험 적용
+            
+            면회 시간: 매일 18:00-20:00
+            """,
+            metadata={"source": "hospital_guide", "section": "입원안내", "doc_type": "guide"}
+        ),
+        Document(
+            text="""
+            자주 묻는 질문 (FAQ)
+            
+            Q: 진료비 수납은 어떻게 하나요?
+            A: 진료 후 1층 수납 창구 또는 무인 수납기를 이용해 주세요. 카드, 현금, 계좌이체 가능합니다.
+            
+            Q: 진단서 발급은 어떻게 하나요?
+            A: 1층 제증명 창구에서 신청하실 수 있습니다. 신분증 지참 필수이며, 발급 소요 시간은 약 30분입니다.
+            
+            Q: 주차 요금은 얼마인가요?
+            A: 외래 환자 3시간 무료, 이후 30분당 1,000원입니다. 입원 환자 보호자는 1일 5,000원입니다.
+            """,
+            metadata={"source": "hospital_guide", "section": "FAQ", "doc_type": "faq"}
+        ),
+    ]
+
+    print(f"✅ 로드된 문서 수: {len(hospital_docs)}")
+    for doc in hospital_docs:
+        print(f"  - [{doc.metadata['section']}] {doc.text[:50].strip()}...")
+    ```
 
 ### Step 3: 청킹 — 문서를 작은 조각(Node)으로 분할
 
@@ -200,25 +206,27 @@ for doc in hospital_docs:
     - **비용·지연**: 프롬프트가 길어질수록 비용↑·응답 속도↓. 질문에 꼭 필요한 조각만 넣는 게 경제적.
     → 그래서 문서를 **검색 단위(노드)**로 잘라 저장하고, 질문과 가장 가까운 조각만 뽑아 LLM에 넣는 것이 RAG의 핵심 아이디어입니다.
 
-```python
-from llama_index.core.node_parser import SentenceSplitter
+??? success "정답 보기"
 
-# SentenceSplitter: 문장 경계를 존중하면서 청킹
-splitter = SentenceSplitter(
-    chunk_size=256,        # 청크 최대 크기 (토큰 기준)
-    chunk_overlap=30,      # 청크 간 겹침 (문맥 연결성 유지)
-)
+    ```python
+    from llama_index.core.node_parser import SentenceSplitter
 
-nodes = splitter.get_nodes_from_documents(hospital_docs)
+    # SentenceSplitter: 문장 경계를 존중하면서 청킹
+    splitter = SentenceSplitter(
+        chunk_size=256,        # 청크 최대 크기 (토큰 기준)
+        chunk_overlap=30,      # 청크 간 겹침 (문맥 연결성 유지)
+    )
 
-print(f"✅ 생성된 노드(청크) 수: {len(nodes)}")
-print(f"\n{'='*50}")
-for i, node in enumerate(nodes):
-    print(f"\n--- 노드 {i+1} ---")
-    print(f"  텍스트: {node.text[:100].strip()}...")
-    print(f"  메타데이터: {node.metadata}")
-    print(f"  길이: {len(node.text)} 자")
-```
+    nodes = splitter.get_nodes_from_documents(hospital_docs)
+
+    print(f"✅ 생성된 노드(청크) 수: {len(nodes)}")
+    print(f"\n{'='*50}")
+    for i, node in enumerate(nodes):
+        print(f"\n--- 노드 {i+1} ---")
+        print(f"  텍스트: {node.text[:100].strip()}...")
+        print(f"  메타데이터: {node.metadata}")
+        print(f"  길이: {len(node.text)} 자")
+    ```
 
 !!! tip "chunk_size와 chunk_overlap의 역할"
     - **chunk_size** (256): 한 조각의 최대 크기 (토큰 수)
@@ -230,17 +238,19 @@ for i, node in enumerate(nodes):
 
 ### 청킹 전략 비교: SentenceSplitter vs TokenTextSplitter
 
-```python
-from llama_index.core.node_parser import TokenTextSplitter
+??? success "정답 보기"
 
-# TokenTextSplitter: 토큰 단위로 정확히 분할 (문장 경계 무시)
-token_splitter = TokenTextSplitter(chunk_size=256, chunk_overlap=30)
-token_nodes = token_splitter.get_nodes_from_documents(hospital_docs)
+    ```python
+    from llama_index.core.node_parser import TokenTextSplitter
 
-print(f"\n📊 청킹 전략 비교:")
-print(f"  SentenceSplitter: {len(nodes)}개 노드")
-print(f"  TokenTextSplitter: {len(token_nodes)}개 노드")
-```
+    # TokenTextSplitter: 토큰 단위로 정확히 분할 (문장 경계 무시)
+    token_splitter = TokenTextSplitter(chunk_size=256, chunk_overlap=30)
+    token_nodes = token_splitter.get_nodes_from_documents(hospital_docs)
+
+    print(f"\n📊 청킹 전략 비교:")
+    print(f"  SentenceSplitter: {len(nodes)}개 노드")
+    print(f"  TokenTextSplitter: {len(token_nodes)}개 노드")
+    ```
 
 | 전략 | 특징 | 장점 | 단점 |
 |---|---|---|---|
@@ -249,53 +259,59 @@ print(f"  TokenTextSplitter: {len(token_nodes)}개 노드")
 
 ### Step 4: 인덱싱 — VectorStoreIndex
 
-```python
-from llama_index.core import VectorStoreIndex
+??? success "정답 보기"
 
-# 문서를 임베딩 → 인메모리 벡터 인덱스에 저장
-index = VectorStoreIndex.from_documents(
-    hospital_docs,
-    transformations=[splitter],  # 청킹 전략 지정
-    show_progress=True,
-)
+    ```python
+    from llama_index.core import VectorStoreIndex
 
-print("✅ 인덱싱 완료!")
-```
+    # 문서를 임베딩 → 인메모리 벡터 인덱스에 저장
+    index = VectorStoreIndex.from_documents(
+        hospital_docs,
+        transformations=[splitter],  # 청킹 전략 지정
+        show_progress=True,
+    )
+
+    print("✅ 인덱싱 완료!")
+    ```
 
 ### Step 5: 질의 — Query Engine
 
-```python
-# Query Engine 생성
-query_engine = index.as_query_engine(
-    similarity_top_k=3,     # 상위 3개 관련 문서 검색
-)
+??? success "정답 보기"
 
-# 질의
-response = query_engine.query("내과에는 어떤 의사가 있나요?")
-print(f"💬 답변: {response.response}")
-print(f"\n📚 참조한 소스:")
-for node in response.source_nodes:
-    print(f"  - [{node.metadata.get('section', '?')}] score={node.score:.3f}")
-    print(f"    {node.text[:80].strip()}...")
-```
+    ```python
+    # Query Engine 생성
+    query_engine = index.as_query_engine(
+        similarity_top_k=3,     # 상위 3개 관련 문서 검색
+    )
+
+    # 질의
+    response = query_engine.query("내과에는 어떤 의사가 있나요?")
+    print(f"💬 답변: {response.response}")
+    print(f"\n📚 참조한 소스:")
+    for node in response.source_nodes:
+        print(f"  - [{node.metadata.get('section', '?')}] score={node.score:.3f}")
+        print(f"    {node.text[:80].strip()}...")
+    ```
 
 ### 추가 질의 테스트 (4개)
 
-```python
-# 다양한 질문으로 RAG 테스트
-questions = [
-    "내과에는 어떤 의사가 있나요?",
-    "입원 1인실 비용은 얼마인가요?",
-    "주차 요금에 대해 알려주세요.",
-    "응급실은 언제 이용할 수 있나요?",
-]
+??? success "정답 보기"
 
-for q in questions:
-    resp = query_engine.query(q)
-    print(f"\n❓ {q}")
-    print(f"💬 {resp.response}")
-    print(f"   (참조 {len(resp.source_nodes)}개, 최고 유사도: {resp.source_nodes[0].score:.3f})")
-```
+    ```python
+    # 다양한 질문으로 RAG 테스트
+    questions = [
+        "내과에는 어떤 의사가 있나요?",
+        "입원 1인실 비용은 얼마인가요?",
+        "주차 요금에 대해 알려주세요.",
+        "응급실은 언제 이용할 수 있나요?",
+    ]
+
+    for q in questions:
+        resp = query_engine.query(q)
+        print(f"\n❓ {q}")
+        print(f"💬 {resp.response}")
+        print(f"   (참조 {len(resp.source_nodes)}개, 최고 유사도: {resp.source_nodes[0].score:.3f})")
+    ```
 
 !!! tip "similarity_top_k가 결과에 미치는 영향"
     `similarity_top_k`는 검색 시 가져올 문서 조각의 수입니다.

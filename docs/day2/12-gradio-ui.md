@@ -29,39 +29,43 @@
 !!! warning "Gradio 버전 고정 필수"
     이 실습의 `ChatInterface` 코드는 **Gradio 4.x 전용**입니다. 5.x에서는 `retry_btn` / `undo_btn` / `clear_btn` / `bubble_full_width` 등이 모두 제거돼 `TypeError` 로 실행이 멈춥니다. 아래 설치 셀의 `gradio==4.44.1` 핀을 임의로 풀지 마세요.
 
-```python
-# ============================================================
-# 📦 패키지 설치 (버전 핀 — Gradio 4.x 전용 실습)
-# ============================================================
-!pip install -q \
-    "gradio==4.44.1" \
-    "sqlalchemy>=2.0" psycopg2-binary "openai>=1.30" sqlparse pandas \
-    "llama-index>=0.10.50,<0.12" llama-index-llms-openai llama-index-embeddings-openai
+??? success "정답 보기"
 
-import os
-from google.colab import userdata
-os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
-os.environ["NEON_DSN"]       = userdata.get("NEON_DSN")
-```
+    ```python
+    # ============================================================
+    # 📦 패키지 설치 (버전 핀 — Gradio 4.x 전용 실습)
+    # ============================================================
+    !pip install -q \
+        "gradio==4.44.1" \
+        "sqlalchemy>=2.0" psycopg2-binary "openai>=1.30" sqlparse pandas \
+        "llama-index>=0.10.50,<0.12" llama-index-llms-openai llama-index-embeddings-openai
 
-```python
-# ============================================================
-# 1. 최소 Gradio ChatInterface (Echo Bot)
-# ============================================================
-import gradio as gr
+    import os
+    from google.colab import userdata
+    os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
+    os.environ["NEON_DSN"]       = userdata.get("NEON_DSN")
+    ```
 
-def echo_chat(message, history):
-    """입력을 그대로 반환하는 에코 봇"""
-    return f"당신이 말한 것: {message}"
+??? success "정답 보기"
 
-demo = gr.ChatInterface(
-    fn=echo_chat,
-    title="🤖 에코 봇",
-    description="입력한 메시지를 그대로 반환합니다.",
-)
-demo.launch(share=True)
-# share=True → 72시간 유효한 공개 URL 생성
-```
+    ```python
+    # ============================================================
+    # 1. 최소 Gradio ChatInterface (Echo Bot)
+    # ============================================================
+    import gradio as gr
+
+    def echo_chat(message, history):
+        """입력을 그대로 반환하는 에코 봇"""
+        return f"당신이 말한 것: {message}"
+
+    demo = gr.ChatInterface(
+        fn=echo_chat,
+        title="🤖 에코 봇",
+        description="입력한 메시지를 그대로 반환합니다.",
+    )
+    demo.launch(share=True)
+    # share=True → 72시간 유효한 공개 URL 생성
+    ```
 
 !!! tip "Gradio 공개 URL"
     실행하면 `Running on public URL: https://xxxxx.gradio.live` 형태의 URL이 나옵니다. 이 URL을 브라우저에서 열면 채팅 UI가 보입니다! 72시간 동안 유효하며, Colab 런타임이 종료되면 URL도 만료됩니다.
@@ -77,193 +81,205 @@ demo.launch(share=True)
 
 ### 가드레일 + SQL 함수 전체 코드
 
-```python
-# ============================================================
-# 2. 병원 DB 상담사 + Gradio 통합
-# ============================================================
-import re
-import pandas as pd
-from sqlalchemy import create_engine, text
-from openai import OpenAI as OpenAIClient
-import sqlparse
+??? success "정답 보기"
 
-engine = create_engine(os.environ["NEON_DSN"])
-oai = OpenAIClient()
+    ```python
+    # ============================================================
+    # 2. 병원 DB 상담사 + Gradio 통합
+    # ============================================================
+    import re
+    import pandas as pd
+    from sqlalchemy import create_engine, text
+    from openai import OpenAI as OpenAIClient
+    import sqlparse
 
-# 스키마 정보 (간소화)
-from llama_index.core import SQLDatabase, Settings
-from llama_index.llms.openai import OpenAI
-from llama_index.embeddings.openai import OpenAIEmbedding
+    engine = create_engine(os.environ["NEON_DSN"])
+    oai = OpenAIClient()
 
-Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0)
-Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+    # 스키마 정보 (간소화)
+    from llama_index.core import SQLDatabase, Settings
+    from llama_index.llms.openai import OpenAI
+    from llama_index.embeddings.openai import OpenAIEmbedding
 
-sql_db = SQLDatabase(
-    engine,
-    include_tables=["patients", "doctors", "visits", "diagnoses", "departments"],
-)
-schema_parts = []
-for t in sql_db.get_usable_table_names():
-    schema_parts.append(sql_db.get_single_table_info(t))
-SCHEMA_INFO = "\n\n".join(schema_parts)
+    Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0)
+    Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
 
-# 가드레일
-BLOCKED = re.compile(
-    r"\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE|GRANT|REVOKE)\b",
-    re.IGNORECASE,
-)
-ALLOWED_TABLES = {"patients", "doctors", "visits", "diagnoses", "departments", "vw_visit_details"}
-```
+    sql_db = SQLDatabase(
+        engine,
+        include_tables=["patients", "doctors", "visits", "diagnoses", "departments"],
+    )
+    schema_parts = []
+    for t in sql_db.get_usable_table_names():
+        schema_parts.append(sql_db.get_single_table_info(t))
+    SCHEMA_INFO = "\n\n".join(schema_parts)
+
+    # 가드레일
+    BLOCKED = re.compile(
+        r"\b(DROP|DELETE|UPDATE|INSERT|ALTER|TRUNCATE|CREATE|GRANT|REVOKE)\b",
+        re.IGNORECASE,
+    )
+    ALLOWED_TABLES = {"patients", "doctors", "visits", "diagnoses", "departments", "vw_visit_details"}
+    ```
 
 ### safe_execute 함수
 
-```python
-def safe_execute(sql: str) -> str:
-    """가드레일 적용 후 SQL 실행"""
-    if BLOCKED.search(sql):
-        return "🚫 위험한 명령어가 포함되어 있어 실행할 수 없습니다."
-    if "LIMIT" not in sql.upper():
-        sql = sql.rstrip().rstrip(";") + "\nLIMIT 1000;"
-    try:
-        df = pd.read_sql(sql, engine)
-        if df.empty:
-            return "(결과 없음)"
-        if len(df) > 20:
-            return df.head(20).to_markdown(index=False) + f"\n\n... 외 {len(df)-20}행"
-        return df.to_markdown(index=False)
-    except Exception as e:
-        return f"❌ SQL 오류: {str(e)}"
-```
+??? success "정답 보기"
+
+    ```python
+    def safe_execute(sql: str) -> str:
+        """가드레일 적용 후 SQL 실행"""
+        if BLOCKED.search(sql):
+            return "🚫 위험한 명령어가 포함되어 있어 실행할 수 없습니다."
+        if "LIMIT" not in sql.upper():
+            sql = sql.rstrip().rstrip(";") + "\nLIMIT 1000;"
+        try:
+            df = pd.read_sql(sql, engine)
+            if df.empty:
+                return "(결과 없음)"
+            if len(df) > 20:
+                return df.head(20).to_markdown(index=False) + f"\n\n... 외 {len(df)-20}행"
+            return df.to_markdown(index=False)
+        except Exception as e:
+            return f"❌ SQL 오류: {str(e)}"
+    ```
 
 ### generate_sql 함수
 
-```python
-def generate_sql(question: str, history_text: str, last_sql: str = "") -> str:
-    """LLM으로 SQL 생성"""
-    last_ctx = f"\n직전 SQL:\n{last_sql}" if last_sql else ""
-    prompt = f"""PostgreSQL 전문가입니다. 병원 DB에 대한 질문에 SQL을 작성하세요.
+??? success "정답 보기"
 
-{SCHEMA_INFO}
+    ```python
+    def generate_sql(question: str, history_text: str, last_sql: str = "") -> str:
+        """LLM으로 SQL 생성"""
+        last_ctx = f"\n직전 SQL:\n{last_sql}" if last_sql else ""
+        prompt = f"""PostgreSQL 전문가입니다. 병원 DB에 대한 질문에 SQL을 작성하세요.
 
-규칙:
-- SELECT만 사용. completed 상태만 유효.
-- "그 중" = 직전 SQL 조건 유지 + 추가 필터
-- SQL만 반환 (설명 없이).
-{last_ctx}
+    {SCHEMA_INFO}
 
-대화:
-{history_text}
+    규칙:
+    - SELECT만 사용. completed 상태만 유효.
+    - "그 중" = 직전 SQL 조건 유지 + 추가 필터
+    - SQL만 반환 (설명 없이).
+    {last_ctx}
 
-질문: {question}
-SQL:"""
+    대화:
+    {history_text}
 
-    resp = oai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0,
-    )
-    sql = resp.choices[0].message.content.strip()
-    sql = re.sub(r"```sql\s*", "", sql)
-    sql = re.sub(r"```\s*", "", sql)
-    return sql
-```
+    질문: {question}
+    SQL:"""
+
+        resp = oai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+        )
+        sql = resp.choices[0].message.content.strip()
+        sql = re.sub(r"```sql\s*", "", sql)
+        sql = re.sub(r"```\s*", "", sql)
+        return sql
+    ```
 
 ### summarize_result 함수
 
-```python
-def summarize_result(question: str, sql: str, result: str) -> str:
-    """결과를 자연어로 요약"""
-    prompt = f"""질문: {question}
-SQL: {sql}
-결과:
-{result[:800]}
+??? success "정답 보기"
 
-한국어로 간결하게 요약하세요. 숫자에 천 단위 구분자 사용."""
+    ```python
+    def summarize_result(question: str, sql: str, result: str) -> str:
+        """결과를 자연어로 요약"""
+        prompt = f"""질문: {question}
+    SQL: {sql}
+    결과:
+    {result[:800]}
 
-    resp = oai.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3,
-    )
-    return resp.choices[0].message.content
-```
+    한국어로 간결하게 요약하세요. 숫자에 천 단위 구분자 사용."""
+
+        resp = oai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+        )
+        return resp.choices[0].message.content
+    ```
 
 ### hospital_chat 핸들러
 
-```python
-def hospital_chat(message: str, history: list) -> str:
-    """Gradio ChatInterface용 핸들러.
+??? success "정답 보기"
 
-    11H 에서 설계한 멀티턴 컨텍스트(`ChatState.last_sql`)를 Gradio 의 history 에서
-    복원해야 "그럼 작년에는?" 같은 후속 질문이 동작합니다. history 는 Gradio 가
-    유지하는 유일한 세션 저장소이므로, 이전 bot 응답에 포함된 ```sql 코드블록을
-    파싱해 `last_sql` 로 되돌립니다.
-    """
+    ````python
+    def hospital_chat(message: str, history: list) -> str:
+        """Gradio ChatInterface용 핸들러.
 
-    history_text = ""
-    last_sql = ""
-    for turn in history[-5:]:  # 최근 5턴만
-        if isinstance(turn, dict):
-            history_text += f"{turn.get('role','user')}: {turn.get('content', '')[:200]}\n"
-            if turn.get("role") == "assistant":
-                m = re.search(r"```sql\s*\n(.*?)\n```", turn.get("content", "") or "", re.DOTALL)
+        11H 에서 설계한 멀티턴 컨텍스트(`ChatState.last_sql`)를 Gradio 의 history 에서
+        복원해야 "그럼 작년에는?" 같은 후속 질문이 동작합니다. history 는 Gradio 가
+        유지하는 유일한 세션 저장소이므로, 이전 bot 응답에 포함된 ```sql 코드블록을
+        파싱해 `last_sql` 로 되돌립니다.
+        """
+
+        history_text = ""
+        last_sql = ""
+        for turn in history[-5:]:  # 최근 5턴만
+            if isinstance(turn, dict):
+                history_text += f"{turn.get('role','user')}: {turn.get('content', '')[:200]}\n"
+                if turn.get("role") == "assistant":
+                    m = re.search(r"```sql\s*\n(.*?)\n```", turn.get("content", "") or "", re.DOTALL)
+                    if m:
+                        last_sql = m.group(1).strip()
+            elif isinstance(turn, (list, tuple)) and len(turn) == 2:
+                user_msg, bot_msg = turn
+                history_text += f"사용자: {user_msg}\n시스템: {(bot_msg or '')[:200]}\n"
+                m = re.search(r"```sql\s*\n(.*?)\n```", bot_msg or "", re.DOTALL)
                 if m:
                     last_sql = m.group(1).strip()
-        elif isinstance(turn, (list, tuple)) and len(turn) == 2:
-            user_msg, bot_msg = turn
-            history_text += f"사용자: {user_msg}\n시스템: {(bot_msg or '')[:200]}\n"
-            m = re.search(r"```sql\s*\n(.*?)\n```", bot_msg or "", re.DOTALL)
-            if m:
-                last_sql = m.group(1).strip()
 
-    try:
-        # SQL 생성
-        sql = generate_sql(message, history_text, last_sql)
+        try:
+            # SQL 생성
+            sql = generate_sql(message, history_text, last_sql)
 
-        # SQL 실행
-        result = safe_execute(sql)
+            # SQL 실행
+            result = safe_execute(sql)
 
-        if result.startswith("🚫") or result.startswith("❌"):
-            return result
+            if result.startswith("🚫") or result.startswith("❌"):
+                return result
 
-        # 자연어 답변
-        answer = summarize_result(message, sql, result)
+            # 자연어 답변
+            answer = summarize_result(message, sql, result)
 
-        return f"{answer}\n\n---\n📝 **실행된 SQL:**\n```sql\n{sql}\n```\n\n📊 **원본 결과:**\n{result}"
+            return f"{answer}\n\n---\n📝 **실행된 SQL:**\n```sql\n{sql}\n```\n\n📊 **원본 결과:**\n{result}"
 
-    except Exception as e:
-        return f"⚠️ 처리 중 오류가 발생했습니다: {str(e)}"
-```
+        except Exception as e:
+            return f"⚠️ 처리 중 오류가 발생했습니다: {str(e)}"
+    ````
 
 ---
 
 ## 실습 Step 3 -- ChatInterface 생성
 
-```python
-# ============================================================
-# 3. Gradio ChatInterface + 세션 상태 관리
-# ============================================================
+??? success "정답 보기"
 
-# Gradio UI 구성 — 4.44.1 기준. 5.x 로 올리면 retry_btn/undo_btn/clear_btn 제거됨
-demo = gr.ChatInterface(
-    fn=hospital_chat,
-    title="🏥 병원 DB AI 상담사",
-    description="자연어로 병원 데이터베이스에 질문하세요. 환자, 의사, 진료 기록을 분석합니다.",
-    examples=[
-        "현재 등록된 환자 수는?",
-        "진료과별 의사 수를 보여줘",
-        "지난 3개월간 가장 많이 방문한 환자 Top 5는?",
-        "응급 진료 건수와 평균 비용은?",
-    ],
-    theme=gr.themes.Soft(),
-    # Gradio 4.x 전용 파라미터 (5.x 에서는 제거됨)
-    retry_btn="🔄 다시 시도",
-    undo_btn="↩️ 실행 취소",
-    clear_btn="🗑️ 대화 초기화",
-)
+    ```python
+    # ============================================================
+    # 3. Gradio ChatInterface + 세션 상태 관리
+    # ============================================================
 
-demo.launch(share=True)
-```
+    # Gradio UI 구성 — 4.44.1 기준. 5.x 로 올리면 retry_btn/undo_btn/clear_btn 제거됨
+    demo = gr.ChatInterface(
+        fn=hospital_chat,
+        title="🏥 병원 DB AI 상담사",
+        description="자연어로 병원 데이터베이스에 질문하세요. 환자, 의사, 진료 기록을 분석합니다.",
+        examples=[
+            "현재 등록된 환자 수는?",
+            "진료과별 의사 수를 보여줘",
+            "지난 3개월간 가장 많이 방문한 환자 Top 5는?",
+            "응급 진료 건수와 평균 비용은?",
+        ],
+        theme=gr.themes.Soft(),
+        # Gradio 4.x 전용 파라미터 (5.x 에서는 제거됨)
+        retry_btn="🔄 다시 시도",
+        undo_btn="↩️ 실행 취소",
+        clear_btn="🗑️ 대화 초기화",
+    )
+
+    demo.launch(share=True)
+    ```
 
 !!! warning "Gradio 5.x 로 업그레이드할 때"
     `retry_btn` / `undo_btn` / `clear_btn` / `Chatbot(bubble_full_width=...)` 는 모두 5.x 에서 제거됐습니다.
@@ -273,68 +289,70 @@ demo.launch(share=True)
 
 ## 실습 Step 4 -- 고급 UI (gr.Blocks + 커스텀 CSS)
 
-```python
-# ============================================================
-# 4. 고급: 커스텀 CSS + 부가 기능
-# ============================================================
+??? success "정답 보기"
 
-custom_css = """
-.gradio-container {
-    max-width: 900px !important;
-    margin: auto !important;
-}
-.message-bubble-border {
-    border-radius: 12px !important;
-}
-"""
+    ```python
+    # ============================================================
+    # 4. 고급: 커스텀 CSS + 부가 기능
+    # ============================================================
 
-with gr.Blocks(css=custom_css, theme=gr.themes.Soft(), title="병원 DB 상담사") as advanced_demo:
-    gr.Markdown("# 🏥 병원 DB AI 상담사")
-    gr.Markdown("자연어로 병원 데이터를 분석하세요. SQL을 자동으로 생성/실행합니다.")
+    custom_css = """
+    .gradio-container {
+        max-width: 900px !important;
+        margin: auto !important;
+    }
+    .message-bubble-border {
+        border-radius: 12px !important;
+    }
+    """
 
-    with gr.Row():
-        with gr.Column(scale=3):
-            chatbot = gr.Chatbot(
-                height=500,
-                bubble_full_width=False,  # Gradio 4.x 전용 (5.x 에서 제거)
-                show_label=False,
-            )
-            msg = gr.Textbox(
-                placeholder="질문을 입력하세요... (예: 남성 환자 수는?)",
-                show_label=False,
-                scale=4,
-            )
-            with gr.Row():
-                submit_btn = gr.Button("📤 전송", variant="primary")
-                clear_btn = gr.Button("🗑️ 초기화")
+    with gr.Blocks(css=custom_css, theme=gr.themes.Soft(), title="병원 DB 상담사") as advanced_demo:
+        gr.Markdown("# 🏥 병원 DB AI 상담사")
+        gr.Markdown("자연어로 병원 데이터를 분석하세요. SQL을 자동으로 생성/실행합니다.")
 
-        with gr.Column(scale=1):
-            gr.Markdown("### 📋 예시 질문")
-            gr.Markdown("""
-            - 환자 수는 몇 명?
-            - 진료과별 의사 수
-            - 월별 방문 추이
-            - 가장 비싼 진료 5건
-            - 중증 진단 환자 목록
-            """)
-            gr.Markdown("### ⚠️ 주의사항")
-            gr.Markdown("""
-            - SELECT 쿼리만 가능
-            - 데이터 수정/삭제 불가
-            - 결과는 최대 1000행
-            """)
+        with gr.Row():
+            with gr.Column(scale=3):
+                chatbot = gr.Chatbot(
+                    height=500,
+                    bubble_full_width=False,  # Gradio 4.x 전용 (5.x 에서 제거)
+                    show_label=False,
+                )
+                msg = gr.Textbox(
+                    placeholder="질문을 입력하세요... (예: 남성 환자 수는?)",
+                    show_label=False,
+                    scale=4,
+                )
+                with gr.Row():
+                    submit_btn = gr.Button("📤 전송", variant="primary")
+                    clear_btn = gr.Button("🗑️ 초기화")
 
-    def respond(message, chat_history):
-        response = hospital_chat(message, chat_history)
-        chat_history.append((message, response))
-        return "", chat_history
+            with gr.Column(scale=1):
+                gr.Markdown("### 📋 예시 질문")
+                gr.Markdown("""
+                - 환자 수는 몇 명?
+                - 진료과별 의사 수
+                - 월별 방문 추이
+                - 가장 비싼 진료 5건
+                - 중증 진단 환자 목록
+                """)
+                gr.Markdown("### ⚠️ 주의사항")
+                gr.Markdown("""
+                - SELECT 쿼리만 가능
+                - 데이터 수정/삭제 불가
+                - 결과는 최대 1000행
+                """)
 
-    msg.submit(respond, [msg, chatbot], [msg, chatbot])
-    submit_btn.click(respond, [msg, chatbot], [msg, chatbot])
-    clear_btn.click(lambda: None, None, chatbot, queue=False)
+        def respond(message, chat_history):
+            response = hospital_chat(message, chat_history)
+            chat_history.append((message, response))
+            return "", chat_history
 
-advanced_demo.launch(share=True)
-```
+        msg.submit(respond, [msg, chatbot], [msg, chatbot])
+        submit_btn.click(respond, [msg, chatbot], [msg, chatbot])
+        clear_btn.click(lambda: None, None, chatbot, queue=False)
+
+    advanced_demo.launch(share=True)
+    ```
 
 ---
 

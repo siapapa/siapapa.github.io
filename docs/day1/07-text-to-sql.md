@@ -47,22 +47,24 @@ flowchart TD
 
 ## 실습 Step 1 — SQLDatabase 래퍼 생성
 
-```python
-# ============================================================
-# 📦 패키지 설치
-# ============================================================
-!pip install -q \
-    llama-index llama-index-llms-openai llama-index-embeddings-openai \
-    sqlalchemy psycopg2-binary pandas
+??? success "정답 보기"
 
-import os
-from google.colab import userdata
-os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
-os.environ["NEON_DSN"]       = userdata.get("NEON_DSN")
+    ```python
+    # ============================================================
+    # 📦 패키지 설치
+    # ============================================================
+    !pip install -q \
+        llama-index llama-index-llms-openai llama-index-embeddings-openai \
+        sqlalchemy psycopg2-binary pandas
 
-from sqlalchemy import create_engine
-engine = create_engine(os.environ["NEON_DSN"])
-```
+    import os
+    from google.colab import userdata
+    os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
+    os.environ["NEON_DSN"]       = userdata.get("NEON_DSN")
+
+    from sqlalchemy import create_engine
+    engine = create_engine(os.environ["NEON_DSN"])
+    ```
 
 !!! danger "`NLSQLTableQueryEngine`은 engine 권한 그대로 실행합니다"
     `nlq.query(...)`가 LLM에게서 받은 SQL을 **그대로** 이 `engine`으로 실행합니다. 즉 위 `engine`이 DB의 **DROP/DELETE 권한**을 가진 계정이라면, LLM이 (또는 사용자 입력이) `DROP TABLE patients` 를 만들면 **실제 테이블이 사라집니다**.
@@ -85,26 +87,28 @@ engine = create_engine(os.environ["NEON_DSN"])
 
     자세한 이유와 함정은 [사전 준비 > 공통 부트스트랩](../setup.md#bootstrap-common)의 `agent_engine`, Day 3 20H의 `sanitize_sql` 경고 박스를 참고하세요.
 
-```python
-# ============================================================
-# 1. SQLDatabase 래퍼 생성
-# ============================================================
-from llama_index.core import SQLDatabase, Settings
-from llama_index.llms.openai import OpenAI
-from llama_index.embeddings.openai import OpenAIEmbedding
+??? success "정답 보기"
 
-Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0)
-Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+    ```python
+    # ============================================================
+    # 1. SQLDatabase 래퍼 생성
+    # ============================================================
+    from llama_index.core import SQLDatabase, Settings
+    from llama_index.llms.openai import OpenAI
+    from llama_index.embeddings.openai import OpenAIEmbedding
 
-# 사용할 테이블 지정
-sql_db = SQLDatabase(
-    engine,
-    include_tables=["patients", "doctors", "visits", "diagnoses", "departments"],
-)
+    Settings.llm = OpenAI(model="gpt-4o-mini", temperature=0)
+    Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
 
-# 어떤 테이블이 연결되었는지 확인
-print(f"✅ 연결된 테이블: {sql_db.get_usable_table_names()}")
-```
+    # 사용할 테이블 지정
+    sql_db = SQLDatabase(
+        engine,
+        include_tables=["patients", "doctors", "visits", "diagnoses", "departments"],
+    )
+
+    # 어떤 테이블이 연결되었는지 확인
+    print(f"✅ 연결된 테이블: {sql_db.get_usable_table_names()}")
+    ```
 
 ---
 
@@ -113,60 +117,66 @@ print(f"✅ 연결된 테이블: {sql_db.get_usable_table_names()}")
 !!! tip "스키마가 프롬프트에 어떻게 들어가는지 확인하기"
     `get_single_table_info()` 메서드를 사용하면 LLM에 실제로 전달되는 스키마 텍스트를 확인할 수 있습니다. COMMENT ON이 여기에 반영됩니다.
 
-```python
-# ============================================================
-# 2. table_info 확인 — LLM에 전달되는 스키마 텍스트
-# ============================================================
+??? success "정답 보기"
 
-# 각 테이블의 table_info 확인
-for table in sql_db.get_usable_table_names():
-    info = sql_db.get_single_table_info(table)
-    print(f"\n{'='*60}")
-    print(f"📋 {table}")
-    print(f"{'='*60}")
-    print(info)
+    ```python
+    # ============================================================
+    # 2. table_info 확인 — LLM에 전달되는 스키마 텍스트
+    # ============================================================
 
-# 💡 여기서 COMMENT ON이 어떻게 반영되는지 확인!
-# COMMENT ON이 없으면 LLM은 컬럼 이름만 보고 추측해야 합니다.
-```
+    # 각 테이블의 table_info 확인
+    for table in sql_db.get_usable_table_names():
+        info = sql_db.get_single_table_info(table)
+        print(f"\n{'='*60}")
+        print(f"📋 {table}")
+        print(f"{'='*60}")
+        print(info)
 
-```python
-# 특정 테이블 하나만 자세히 보기
-print("="*60)
-print("📋 visits 테이블의 table_info (LLM이 보는 것):")
-print("="*60)
-print(sql_db.get_single_table_info("visits"))
+    # 💡 여기서 COMMENT ON이 어떻게 반영되는지 확인!
+    # COMMENT ON이 없으면 LLM은 컬럼 이름만 보고 추측해야 합니다.
+    ```
 
-print("\n💡 COMMENT ON이 있으면 LLM은:")
-print("   - visit_type이 'outpatient/inpatient/emergency'임을 알 수 있음")
-print("   - status가 'scheduled/completed/cancelled/no_show'임을 알 수 있음")
-print("   - cost가 진료비(원)임을 명확히 알 수 있음")
-print("\n❌ COMMENT ON이 없으면 LLM은:")
-print("   - visit_type에 어떤 값이 들어가는지 추측해야 함")
-print("   - status에 'active/inactive'를 잘못 추측할 수 있음")
-print("   - cost의 단위를 알 수 없음")
-```
+??? success "정답 보기"
+
+    ```python
+    # 특정 테이블 하나만 자세히 보기
+    print("="*60)
+    print("📋 visits 테이블의 table_info (LLM이 보는 것):")
+    print("="*60)
+    print(sql_db.get_single_table_info("visits"))
+
+    print("\n💡 COMMENT ON이 있으면 LLM은:")
+    print("   - visit_type이 'outpatient/inpatient/emergency'임을 알 수 있음")
+    print("   - status가 'scheduled/completed/cancelled/no_show'임을 알 수 있음")
+    print("   - cost가 진료비(원)임을 명확히 알 수 있음")
+    print("\n❌ COMMENT ON이 없으면 LLM은:")
+    print("   - visit_type에 어떤 값이 들어가는지 추측해야 함")
+    print("   - status에 'active/inactive'를 잘못 추측할 수 있음")
+    print("   - cost의 단위를 알 수 없음")
+    ```
 
 ---
 
 ## 실습 Step 3 — NLSQLTableQueryEngine 최소 예제
 
-```python
-# ============================================================
-# 3. NLSQLTableQueryEngine 생성
-# ============================================================
-from llama_index.core.query_engine import NLSQLTableQueryEngine
+??? success "정답 보기"
 
-nlq = NLSQLTableQueryEngine(
-    sql_database=sql_db,
-    tables=["patients", "doctors", "visits", "diagnoses", "departments"],
-)
+    ```python
+    # ============================================================
+    # 3. NLSQLTableQueryEngine 생성
+    # ============================================================
+    from llama_index.core.query_engine import NLSQLTableQueryEngine
 
-# 간단한 질문
-response = nlq.query("현재 등록된 환자 수는 몇 명인가요?")
-print(f"💬 답변: {response.response}")
-print(f"📝 생성된 SQL: {response.metadata['sql_query']}")
-```
+    nlq = NLSQLTableQueryEngine(
+        sql_database=sql_db,
+        tables=["patients", "doctors", "visits", "diagnoses", "departments"],
+    )
+
+    # 간단한 질문
+    response = nlq.query("현재 등록된 환자 수는 몇 명인가요?")
+    print(f"💬 답변: {response.response}")
+    print(f"📝 생성된 SQL: {response.metadata['sql_query']}")
+    ```
 
 ---
 
@@ -174,80 +184,86 @@ print(f"📝 생성된 SQL: {response.metadata['sql_query']}")
 
 5개의 테스트 질문을 Easy부터 Hard까지 실행합니다.
 
-```python
-# ============================================================
-# 4. 다양한 난이도의 질문 테스트
-# ============================================================
+??? success "정답 보기"
 
-test_questions = [
-    "전체 환자 수는?",            # Easy
-    "남성 환자 수는?",            # Easy
-    "진료과별 의사 수를 보여줘",   # Medium
-    "지난달 방문 환자 수는?",      # Medium
-    "최근에 많이 온 사람은?",      # Hard (모호한 질문)
-]
+    ```python
+    # ============================================================
+    # 4. 다양한 난이도의 질문 테스트
+    # ============================================================
 
-for q in test_questions:
-    try:
-        resp = nlq.query(q)
-        print(f"✅ Q: {q}")
-        print(f"   SQL: {resp.metadata['sql_query']}")
-        print(f"   A: {resp.response[:100]}\n")
-    except Exception as e:
-        print(f"❌ Q: {q}")
-        print(f"   오류: {str(e)[:80]}\n")
-```
+    test_questions = [
+        "전체 환자 수는?",            # Easy
+        "남성 환자 수는?",            # Easy
+        "진료과별 의사 수를 보여줘",   # Medium
+        "지난달 방문 환자 수는?",      # Medium
+        "최근에 많이 온 사람은?",      # Hard (모호한 질문)
+    ]
+
+    for q in test_questions:
+        try:
+            resp = nlq.query(q)
+            print(f"✅ Q: {q}")
+            print(f"   SQL: {resp.metadata['sql_query']}")
+            print(f"   A: {resp.response[:100]}\n")
+        except Exception as e:
+            print(f"❌ Q: {q}")
+            print(f"   오류: {str(e)[:80]}\n")
+    ```
 
 ---
 
 ## 실습 Step 5 — 8개 질문 난이도별 테스트 및 결과 분석
 
-```python
-# ============================================================
-# 5. 난이도별 8개 질문 — 성공/실패 분석
-# ============================================================
+??? success "정답 보기"
 
-test_questions = [
-    # Easy
-    ("🟢 Easy", "남성 환자는 몇 명인가요?"),
-    ("🟢 Easy", "내과에 소속된 의사 목록을 보여주세요."),
-    ("🟢 Easy", "2026년 1월에 방문한 환자의 이름을 알려주세요."),
+    ```python
+    # ============================================================
+    # 5. 난이도별 8개 질문 — 성공/실패 분석
+    # ============================================================
 
-    # Medium
-    ("🟡 Medium", "진료과별 의사 수를 알려주세요."),
-    ("🟡 Medium", "완료된 진료 중 진료비가 가장 높은 상위 5건은?"),
-    ("🟡 Medium", "2번 이상 방문한 환자의 이름과 방문 횟수를 보여주세요."),
+    test_questions = [
+        # Easy
+        ("🟢 Easy", "남성 환자는 몇 명인가요?"),
+        ("🟢 Easy", "내과에 소속된 의사 목록을 보여주세요."),
+        ("🟢 Easy", "2026년 1월에 방문한 환자의 이름을 알려주세요."),
 
-    # Hard
-    ("🔴 Hard", "각 진료과별로 가장 최근에 진료한 의사의 이름은?"),
-    ("🔴 Hard", "월별 방문 추이를 전월 대비 증감과 함께 보여주세요."),
-]
+        # Medium
+        ("🟡 Medium", "진료과별 의사 수를 알려주세요."),
+        ("🟡 Medium", "완료된 진료 중 진료비가 가장 높은 상위 5건은?"),
+        ("🟡 Medium", "2번 이상 방문한 환자의 이름과 방문 횟수를 보여주세요."),
 
-results = []
-for level, question in test_questions:
-    print(f"\n{'='*60}")
-    print(f"{level}: {question}")
-    try:
-        resp = nlq.query(question)
-        print(f"💬 답변: {resp.response}")
-        print(f"📝 SQL: {resp.metadata['sql_query']}")
-        results.append({"level": level, "question": question, "status": "✅", "sql": resp.metadata['sql_query']})
-    except Exception as e:
-        print(f"❌ 에러: {str(e)[:100]}")
-        results.append({"level": level, "question": question, "status": "❌", "sql": str(e)[:100]})
-```
+        # Hard
+        ("🔴 Hard", "각 진료과별로 가장 최근에 진료한 의사의 이름은?"),
+        ("🔴 Hard", "월별 방문 추이를 전월 대비 증감과 함께 보여주세요."),
+    ]
 
-```python
-# ============================================================
-# 6. 결과 요약 — 성공/실패 분석
-# ============================================================
-import pandas as pd
+    results = []
+    for level, question in test_questions:
+        print(f"\n{'='*60}")
+        print(f"{level}: {question}")
+        try:
+            resp = nlq.query(question)
+            print(f"💬 답변: {resp.response}")
+            print(f"📝 SQL: {resp.metadata['sql_query']}")
+            results.append({"level": level, "question": question, "status": "✅", "sql": resp.metadata['sql_query']})
+        except Exception as e:
+            print(f"❌ 에러: {str(e)[:100]}")
+            results.append({"level": level, "question": question, "status": "❌", "sql": str(e)[:100]})
+    ```
 
-df = pd.DataFrame(results)
-print("\n📊 결과 요약:")
-print(df[["level", "question", "status"]].to_string(index=False))
-print(f"\n성공: {len(df[df['status']=='✅'])} / {len(df)}")
-```
+??? success "정답 보기"
+
+    ```python
+    # ============================================================
+    # 6. 결과 요약 — 성공/실패 분석
+    # ============================================================
+    import pandas as pd
+
+    df = pd.DataFrame(results)
+    print("\n📊 결과 요약:")
+    print(df[["level", "question", "status"]].to_string(index=False))
+    print(f"\n성공: {len(df[df['status']=='✅'])} / {len(df)}")
+    ```
 
 ---
 
