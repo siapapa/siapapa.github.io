@@ -216,18 +216,32 @@ with engine.connect() as conn:
 
 ---
 
-## (선택) Matplotlib 한글 폰트 설정
+## Matplotlib 한글 폰트 설정
 
-Day 1 6H (임베딩 차트), Day 4 22H (Ragas 레이더·4패널) 등 그래프에 한글을 그려야 할 때 첫 셀에 추가합니다.
+차트의 한글 라벨이 □ 박스로 깨지지 않도록 NanumGothic 을 설치·등록합니다.
+
+!!! tip "관련 노트북은 이미 자동 처리됩니다"
+    matplotlib 을 사용하는 노트북(`05_embedding_chromadb`, `18_langsmith_tracing`, `19_ragas_eval`)은 `%pip install` 직후 셀에서 **이 셋업을 자동으로 실행** 합니다. 수강생이 따로 추가할 필요 없음. 셀 재실행도 안전(이미 설치돼 있으면 즉시 통과).
+
+본인 프로젝트 노트북에서 matplotlib 한글 차트를 그릴 때는 다음 코드를 첫 셀 근처에 추가하세요. apt 설치 + matplotlib 폰트 매니저 등록까지 한 번에 해결합니다.
 
 ```python
-!apt-get install -y fonts-nanum > /dev/null 2>&1
-!fc-cache -fv > /dev/null 2>&1
+import subprocess
+subprocess.run(["apt-get", "install", "-y", "fonts-nanum"], check=False, capture_output=True)
+subprocess.run(["fc-cache", "-fv"],                          check=False, capture_output=True)
 
-import matplotlib as mpl
-mpl.rcParams['font.family'] = 'NanumGothic'
-mpl.rcParams['axes.unicode_minus'] = False
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+for p in font_manager.findSystemFonts():
+    if "Nanum" in p:
+        font_manager.fontManager.addfont(p)
+
+plt.rcParams["font.family"]        = "NanumGothic"
+plt.rcParams["axes.unicode_minus"] = False  # 마이너스 부호 깨짐 방지
 ```
+
+!!! note "왜 `addfont()` 까지 호출하나요?"
+    `apt-get` 만으로는 matplotlib 의 폰트 캐시가 새 폰트를 인식하지 못해 **런타임 재시작 없이는 적용이 안 되는** 경우가 있습니다. `font_manager.fontManager.addfont(...)` 로 직접 등록하면 그 자리에서 즉시 활성화됩니다.
 
 ---
 
