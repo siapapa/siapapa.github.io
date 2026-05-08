@@ -7,6 +7,12 @@
 - 낮은 점수의 원인을 진단하고 개선할 수 있다
 - Before/After 비교로 개선 효과를 시각화할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 본인 에이전트의 점수표(Ragas 4개 메트릭)를 만들고, 어디가 약한지 진단합니다.
+    - **꼭 이해**: 4개 메트릭의 비유 — **Faithfulness**(오픈북에서 안 벗어났나) · **Answer Relevancy**(질문에 답했나) · **Context Precision**(가져온 자료 중 진짜 필요한 비율) · **Context Recall**(필요한 자료를 빠뜨리지 않았나).
+    - **지금은 몰라도 OK**: 각 메트릭의 LLM-as-judge 내부 프롬프트와 수식. 점수의 **상대 비교**만 보면 됩니다.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="19_ragas_eval"></div>

@@ -6,6 +6,12 @@
 - 스트리밍, 배치, fallback을 적용할 수 있다
 - 대화 히스토리를 RAG 체인에 통합할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 어제 만든 RAG 를 LCEL 파이프로 다시 조립해 **검색 → 컨텍스트 합성 → LLM 답변** 을 한 줄로 만듭니다.
+    - **꼭 이해**: `RunnablePassthrough` 는 "질문 그대로 통과", `RunnableParallel` 은 "검색·답변 동시 실행" — 두 단어만.
+    - **지금은 몰라도 OK**: 스트리밍/배치/에러 fallback 의 세부 구현.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="13_lcel_rag_chain"></div>

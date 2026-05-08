@@ -85,6 +85,7 @@ extra_javascript:
 
 nav:
   - Home: index.md
+  - "비개발자 학습 가이드": beginners-guide.md
   - 사전 준비: setup.md
   - "Day 1 — SQL · RAG · 프로젝트 (1~8H)":
     - day1/index.md
@@ -119,6 +120,8 @@ nav:
     - "23H. 최종 튜닝 & 리허설": day4/23-final-tuning.md
     - "24H. 최종 발표 & 수료": day4/24-final-presentation.md
   - 부록:
+    - "용어 사전": appendix/glossary.md
     - "노트북 번호 체계": appendix/notebook-numbering.md
     - "트러블슈팅": appendix/troubleshooting.md
     - "프로젝트 브리프": appendix/project-brief.md
+    - "무료 LLM · Ollama (Qwen3)": appendix/free-llm-ollama.md

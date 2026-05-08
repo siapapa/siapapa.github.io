@@ -6,6 +6,12 @@
 - `StateGraph`, `Node`, `Edge`, `ConditionalEdge`로 그래프를 구성할 수 있다
 - 루프와 재시도 패턴을 구현할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: LCEL 로 못 그리는 **루프·재시도·조건 분기** 를 그릴 수 있는 그래프 도구.
+    - **꼭 이해**: LangGraph = "신호등 시뮬레이터". State + Node + Edge + 조건 분기 4가지 부품으로 흐름도를 그립니다.
+    - **지금은 몰라도 OK**: Checkpointer, ReAct 패턴의 내부, 멀티 세션 관리. 본인 프로젝트 v1 에는 단순 그래프면 충분.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="16_langgraph_concept"></div>
@@ -319,3 +325,12 @@ agent.invoke({"question": "그 중 급여 최고는?"}, config=config)
     - **add_conditional_edges**: 조건에 따라 다른 노드로 분기 (반환값 = 노드 이름 문자열)
     - **stream()**: 각 노드의 실행 과정을 단계별로 추적 (디버깅에 필수)
     - 20H에서 이 패턴을 사용하여 **SQL 에이전트**를 구축합니다
+
+---
+
+!!! warning "🆘 비개발자를 위한 회복 가이드 — 여기까지 어렵다면"
+    1. **상태 머신(FSM)** 은 신호등입니다. "지금 무슨 색인지 + 다음 색은 무엇인지" — 그 이상의 수학은 필요 없습니다.
+    2. `StateGraph + Node + Edge` = "그림(흐름도)을 코드로 그리기". `add_node` 로 동그라미 하나, `add_edge` 로 화살표 하나.
+    3. **조건부 분기(`add_conditional_edges`)** 는 "성공이면 다음 단계, 실패면 되돌아가기" 한 패턴만 외워도 20H SQL 에이전트에서 그대로 씁니다.
+
+    → 더 막힌다면 [용어 사전 — LangGraph 섹션](../appendix/glossary.md#e-langchain-lcel-pydantic-langgraph) 으로.

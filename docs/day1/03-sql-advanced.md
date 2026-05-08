@@ -7,6 +7,12 @@
 - 서브쿼리와 `CTE`로 복잡한 쿼리를 가독성 있게 구조화할 수 있다
 - 윈도우 함수(`ROW_NUMBER`, `RANK`, `LAG` 등)의 기본 사용법을 익힌다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 엑셀의 **피벗 테이블·VLOOKUP** 을 SQL 로 하는 법을 익힙니다.
+    - **꼭 이해**: `GROUP BY` = 피벗(같은 값끼리 묶어 통계), `JOIN` = VLOOKUP(다른 표를 공통 컬럼으로 이어 붙이기). `WHERE`(그룹 전 필터) vs `HAVING`(그룹 후 필터) 의 순서.
+    - **지금은 몰라도 OK**: 윈도우 함수 전 종류(`RANK / LAG / LEAD / NTILE` …). **`ROW_NUMBER` 한 가지** 만 이해해도 본 강의 전체에서 막힐 일 없습니다.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → JOIN/GROUP BY/CTE/윈도우 함수 모두 비유와 함께 정리되어 있습니다.
+
 ---
 
 <div class="colab-link" data-notebook="02_sql_aggregation_join"></div>

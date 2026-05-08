@@ -6,6 +6,12 @@
 - Re-ranking(CrossEncoder)으로 검색 정밀도를 높일 수 있다
 - weight 실험으로 최적 비율을 찾을 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 1차 검색 결과를 **2차 정밀 정렬(Re-rank)** 로 다듬어 정확도를 끌어올립니다.
+    - **꼭 이해**: BM25(키워드) + 벡터(의미) = 하이브리드 검색. Re-rank = "1차 면접 통과자만 임원 면접" 비유.
+    - **지금은 몰라도 OK**: CrossEncoder 와 Cohere Re-rank 의 점수 함수. Cohere 키 없으면 자동 폴백되니 걱정 마세요.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="15_advanced_rag_retrieval"></div>

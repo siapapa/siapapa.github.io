@@ -85,6 +85,7 @@ All student-facing materials (slides, notebook markdown, project brief, assessme
 - **`Lecture_Day2.md`** — Day 2 (9~12H) 상세 강의자료. 피어리뷰·NLSQLTableQueryEngine 심화·멀티턴 상담사·Gradio UI.
 - **`Lecture_Day3.md`** — Day 3 (13~20H) 상세 강의자료. Vanna·LangChain/LCEL·Advanced RAG·LangGraph SQL 에이전트 빌드.
 - **`Lecture_Day4.md`** — Day 4 (21~24H) 상세 강의자료. LangSmith 트레이싱·Ragas 정량 평가·최종 발표·수료.
+- **`docs/appendix/free-llm-ollama.md` + `notebooks/99_free_llm_ollama.ipynb`** — OpenAI 비용 부담 완화용 부록. Colab에서 Ollama(Qwen3) 띄우기 / Groq 무료 Tier / LlamaIndex·LangChain·Vanna LLM 초기화 교체 레시피. mkdocs nav · `setup.md` · `colab-links.js` 등록 완료.
 
 ### 🔜 다음 작업 후보 (우선순위 미정, 사용자 확인 필요)
 1. **Colab 노트북 실제 구현** — `Lecture_Day*.md`의 코드를 실행 가능한 `.ipynb`로 분할 제작. 번호 체계 `00_demo_agent.ipynb` ~ `19_ragas_eval.ipynb`.

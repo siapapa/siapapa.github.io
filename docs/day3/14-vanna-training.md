@@ -6,6 +6,12 @@
 - In-Chat Training으로 오답 -> 정답 피드백 루프를 실행할 수 있다
 - 학습 전후 정확도 변화를 측정할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 본인 프로젝트 DB 에 Vanna 를 붙이고, 오답을 정답으로 바로 가르치는 In-Chat Training 을 체험합니다.
+    - **꼭 이해**: 한 번 가르친 정답 SQL 은 다음에 비슷한 질문이 오면 자동 활용된다는 점.
+    - **지금은 몰라도 OK**: Vanna 의 벡터 저장소 내부 구조.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="11_vanna_training"></div>

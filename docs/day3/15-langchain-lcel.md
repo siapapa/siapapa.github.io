@@ -7,6 +7,12 @@
 - `Runnable` 인터페이스의 `invoke`, `stream`, `batch` 메서드를 사용할 수 있다
 - Pydantic을 활용한 구조화 출력을 생성할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 레고 블록처럼 AI 부품을 **`|` 로 끼워 조립** 하는 LangChain 의 기본 문법.
+    - **꼭 이해**: `prompt | model | parser` 는 "프롬프트 만들기 → AI 호출 → 답 정리" 라는 3단 파이프. 그뿐입니다.
+    - **지금은 몰라도 OK**: `with_structured_output` / `Pydantic` / `JsonOutputParser` 의 모든 옵션. "AI 에게 양식 채우기 시키기" 라는 한 마디로 통합 이해.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="12_langchain_lcel"></div>
@@ -353,3 +359,14 @@ print(f"JSON 결과: {result}")
     - **RunnablePassthrough/Lambda/Parallel**: 데이터 흐름 제어 유틸리티
     - **구조화 출력** = AI 답변을 정해진 필드로 받기 (20H 에이전트에서 핵심)
     - **JsonOutputParser** = `with_structured_output` 대안
+
+---
+
+!!! warning "🆘 비개발자를 위한 회복 가이드 — 여기까지 어렵다면"
+    Day 3 부터는 새 개념이 누적되는 구간입니다. 이 시간이 어렵게 느껴진다면 다음만 가져가세요.
+
+    1. `prompt | model | parser` — 이 한 줄이 LCEL 전부입니다. 나머지는 변형판입니다.
+    2. `Pydantic / TypedDict` 는 **"AI 에게 양식을 채우게 시키는 도구"** 라는 한 마디면 충분합니다. 내부 동작은 4일 후에도 안 봐도 됩니다.
+    3. `RunnablePassthrough / Lambda / Parallel` 은 16H RAG 체인에서 다시 만나니, 지금은 "통과·변환·동시" 세 단어만 외워 두세요.
+
+    → 더 막힌다면 [용어 사전 — LangChain·LCEL·Pydantic](../appendix/glossary.md#e-langchain-lcel-pydantic-langgraph) 으로.

@@ -6,6 +6,12 @@
 - `SELECT`, `WHERE`, `ORDER BY`, `LIMIT`을 사용할 수 있다
 - `EXPLAIN`으로 쿼리 실행 계획을 읽을 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 데이터베이스를 **"엑셀의 큰 형"** 으로 받아들이고, `SELECT ... WHERE ... ORDER BY` 한 줄을 직접 쳐 보는 시간입니다.
+    - **꼭 이해**: 테이블 = 엑셀 시트, 컬럼 = 엑셀 열, 행 = 엑셀 행. `WHERE` 는 엑셀의 "필터", `ORDER BY` 는 "정렬", `LIMIT` 은 "위쪽 N개만 보기" 라는 비유.
+    - **지금은 몰라도 OK**: `EXPLAIN` 결과의 세부 항목, `CHECK / SERIAL` 같은 제약조건의 내부 동작. "이런 게 있구나" 정도면 됩니다.
+    - **막히면**: [용어 사전 — 데이터·SQL·DB 섹션](../appendix/glossary.md#b-sqldb) 에 테이블·스키마·DSN·`text()` 등이 모두 정리되어 있습니다.
+
 <div class="colab-link" data-notebook="01_postgres_basics"></div>
 
 ## 쉬운 비유 — 데이터베이스란?

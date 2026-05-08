@@ -6,6 +6,12 @@
 - `NLSQLTableQueryEngine`으로 자연어 질문을 SQL로 변환/실행할 수 있다
 - LLM에 전달되는 `table_info`의 내용을 확인하고 Schema Intelligence의 중요성을 체감한다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: **자연어 질문 → AI 가 SQL 작성 → 실행 → 자연어 답변** 의 가장 단순한 형태를 처음으로 손에 쥐어 보는 시간입니다.
+    - **꼭 이해**: AI 가 SQL 을 만들 때 참고하는 **유일한 정보** 는 "스키마 텍스트(`table_info`) + 샘플 행" 이라는 점. → 4H에서 배운 좋은 스키마가 왜 중요한지 여기서 체감.
+    - **지금은 몰라도 OK**: `NLSQLTableQueryEngine` 내부의 프롬프트 추적 로그를 한 글자씩 읽기. "어떤 정보가 어떤 순서로 들어가는지" 흐름만 보세요.
+    - **막히면**: [용어 사전 — Text-to-SQL/NLSQLTableQueryEngine](../appendix/glossary.md#d-rag-llamaindex-chromadb) 항목.
+
 <div class="colab-link" data-notebook="06_text_to_sql"></div>
 
 ## Text-to-SQL이란?

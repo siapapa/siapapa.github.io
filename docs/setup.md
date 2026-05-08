@@ -2,6 +2,12 @@
 
 이 페이지에서는 4일간의 실습에 필요한 모든 환경을 준비합니다.
 
+!!! tip "비개발자라면 — 먼저 이 두 페이지부터"
+    - **[비개발자 학습 가이드](beginners-guide.md)** — 24H 강의를 어떻게 읽고 따라가야 하는지 마음가짐과 신호 해석법.
+    - **[용어 사전](appendix/glossary.md)** — API·DSN·임베딩·LCEL 등 강의 전반의 용어를 비유와 함께 정리한 한 페이지.
+
+    이 페이지에서 처음 보는 단어(예: DSN, Connection String, SSL, Secrets)는 용어 사전에 모두 정리되어 있습니다.
+
 ## Neon PostgreSQL 가입 가이드
 
 Neon은 클라우드 기반 PostgreSQL 서비스로, 무료 플랜으로 실습에 충분합니다.
@@ -40,6 +46,9 @@ Neon은 클라우드 기반 PostgreSQL 서비스로, 무료 플랜으로 실습�
 
 !!! warning "주의"
     API 키는 생성 시 한 번만 표시됩니다. 반드시 복사해 두세요. 분실 시 새로 발급해야 합니다.
+
+!!! tip "비용이 부담된다면 — 무료 LLM 경로"
+    OpenAI 무료 크레딧이 소진되었거나 결제 수단이 없는 경우, **Colab에서 Ollama(Qwen3) 를 띄우거나 Groq 무료 Tier** 로 강의를 그대로 따라갈 수 있습니다. 노트북당 LLM 초기화 1~2줄만 바꾸면 됩니다. → [부록 · 무료 LLM · Ollama (Qwen3)](appendix/free-llm-ollama.md)
 
 ---
 

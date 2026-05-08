@@ -7,6 +7,12 @@
 - `Settings` 객체를 통해 LLM과 임베딩 모델을 설정할 수 있다
 - 문서 로딩, 청킹, 인덱싱, 질의를 수행할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: AI 에게 **"오픈북 시험"** 을 보게 하는 도구(LlamaIndex)로 병원 안내 챗봇을 만듭니다.
+    - **꼭 이해**: RAG 5단계 흐름 — **문서 로딩 → 청킹(작게 자르기) → 임베딩(좌표로 바꾸기) → 인덱싱(저장) → 질의(꺼내 쓰기)**. 이 5단계가 강의 끝까지 반복됩니다.
+    - **지금은 몰라도 OK**: `chunk_size` 의 최적값, `transformations` 옵션의 세부, `SentenceSplitter` 와 `TokenTextSplitter` 의 알고리즘 차이. "더 작게 자르면 정밀, 더 크게 자르면 문맥 보존" 정도의 감만 있으면 됩니다.
+    - **막히면**: [용어 사전 — RAG·LlamaIndex 섹션](../appendix/glossary.md#d-rag-llamaindex-chromadb) 에 RAG·청크·Top-K·Settings 가 비유와 함께 정리되어 있습니다.
+
 ---
 
 <div class="colab-link" data-notebook="04_llamaindex_intro"></div>

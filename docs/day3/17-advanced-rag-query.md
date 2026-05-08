@@ -6,6 +6,12 @@
 - HyDE, Multi-Query, Query Decomposition 3가지 기법을 구현할 수 있다
 - 같은 질문에 대해 세 기법의 검색 결과를 비교 분석할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: "질문 그대로" 검색하지 않고 **AI 가 더 좋은 검색어로 다시 써서** 검색하는 기법(HyDE / Multi-Query / 분해).
+    - **꼭 이해**: 질문이 짧거나 모호할 때 검색이 빗나간다 → "검색어를 풍부하게" 가 핵심 아이디어.
+    - **지금은 몰라도 OK**: 세 기법의 수학적 차이. 상황별로 어떤 게 잘 맞는지는 본인 프로젝트에서 실험합니다.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="14_advanced_rag_query"></div>

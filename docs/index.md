@@ -13,8 +13,12 @@ hide:
 
 [:material-rocket-launch: 시작하기](setup.md){ .md-button .md-button--primary }
 [:material-book-open-variant: Day 1 바로가기](day1/index.md){ .md-button }
+[:material-account-school: 비개발자 학습 가이드](beginners-guide.md){ .md-button }
 
 </div>
+
+!!! tip "코딩이 처음이거나 SQL이 낯서신가요?"
+    먼저 **[비개발자 학습 가이드](beginners-guide.md)** 를 5분만 읽고 시작하세요. 24H를 어떻게 따라가야 무리 없이 마칠 수 있는지 — 그리고 막혔을 때 어디를 보면 되는지 — 길잡이를 정리해 두었습니다. 모르는 단어가 나올 때마다 펼쳐 볼 **[용어 사전](appendix/glossary.md)** 도 함께 준비되어 있습니다.
 
 ---
 

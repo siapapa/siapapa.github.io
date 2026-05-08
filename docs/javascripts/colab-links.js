@@ -40,7 +40,9 @@ const NOTEBOOK_IDS = {
   "16_langgraph_concept":      "1O-7WHcVEqQAOyMFeadVfBEkYhAQnBqEa",
   "17_my_sql_agent":           "1Y8Gzt_Y0PQzFrpUJJgch3X2oz07hre4_",
   "18_langsmith_tracing":      "1vJrKnAOt_W3bjeBVQ7szzLVNT6Ska-UX",
-  "19_ragas_eval":             "11BM1ns1cxdkVGoIlPtzz_qZFQBESNYUh"
+  "19_ragas_eval":             "11BM1ns1cxdkVGoIlPtzz_qZFQBESNYUh",
+  // 부록: OpenAI 비용 부담을 줄이는 무료/Ollama 경로 실습 — Drive 업로드 후 ID 채우기
+  "99_free_llm_ollama":        ""
 };
 
 const COLAB_BADGE = "https://colab.research.google.com/assets/colab-badge.svg";

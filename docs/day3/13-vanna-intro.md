@@ -6,6 +6,12 @@
 - LlamaIndex Text-to-SQL과 Vanna의 차이를 비교 분석할 수 있다
 - 학습 자산 3종(DDL / Documentation / SQL Pairs)의 역할을 설명할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: AI 사수에게 **"우리 회사 DB 의 사례집"** 을 보여주며 가르치는 도구(Vanna)의 작동 방식.
+    - **꼭 이해**: Vanna 학습 자산 3종 — DDL(스키마) / Documentation(용어집) / SQL Pairs(질문↔정답쌍).
+    - **지금은 몰라도 OK**: 내부 RAG 검색 알고리즘. "비슷한 사례를 찾아 LLM 에 같이 넣어 준다" 정도.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="10_vanna_intro"></div>

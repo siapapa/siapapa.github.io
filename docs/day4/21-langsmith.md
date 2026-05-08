@@ -7,6 +7,12 @@
 - 토큰 사용량, 지연 시간, 비용을 분석할 수 있다
 - 평가용 Dataset을 프로그래밍 방식으로 생성할 수 있다
 
+!!! tip "🧭 이 시간을 이렇게 읽으세요 (비개발자용)"
+    - **한 줄 핵심**: 본인 에이전트가 어떤 단계를 거쳐 답을 만들었는지 재생 영상처럼 보여주는 도구(LangSmith)를 연결합니다.
+    - **꼭 이해**: 환경변수 `LANGSMITH_TRACING=true` 한 줄이면 LangChain 호출이 자동으로 기록된다는 점. 토큰·지연·비용까지 함께 보입니다.
+    - **지금은 몰라도 OK**: `list_runs` API의 모든 필터 옵션, 평가용 데이터셋의 세부 스키마. UI에서 클릭으로 확인하면 충분합니다.
+    - **막히면**: 모르는 단어는 [용어 사전](../appendix/glossary.md) 으로 → 처음이라면 [비개발자 학습 가이드](../beginners-guide.md).
+
 ---
 
 <div class="colab-link" data-notebook="18_langsmith_tracing"></div>
