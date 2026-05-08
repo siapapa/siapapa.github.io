@@ -68,14 +68,18 @@ markdown_extensions:
 plugins:
   - search:
       lang: en
-  - with-pdf:
-      output_path: pdf/AI_SQL_Agent_24H.pdf
-      cover_title: AI 기반 SQL 분석 에이전트 구축
-      cover_subtitle: 24시간 집중 강의 (Day 1 ~ Day 4)
-      author: Jaeyoo
-      toc_title: 목차
-      heading_shift: false
-      enabled_if_env: ENABLE_PDF_EXPORT
+  # with-pdf 는 CI(requirements-docs.txt)에 미설치 + --strict 모드에서 "PDF disabled"
+  # 경고가 fatal 로 처리돼 GitHub Pages 배포가 막혀 일시 비활성화.
+  # PDF 가 필요하면: (1) `pip install mkdocs-with-pdf` 후 (2) 아래 블록 주석 해제,
+  # (3) `ENABLE_PDF_EXPORT=1 mkdocs build` 로 로컬 생성.
+  # - with-pdf:
+  #     output_path: pdf/AI_SQL_Agent_24H.pdf
+  #     cover_title: AI 기반 SQL 분석 에이전트 구축
+  #     cover_subtitle: 24시간 집중 강의 (Day 1 ~ Day 4)
+  #     author: Jaeyoo
+  #     toc_title: 목차
+  #     heading_shift: false
+  #     enabled_if_env: ENABLE_PDF_EXPORT
 
 extra_css:
   - stylesheets/extra.css
