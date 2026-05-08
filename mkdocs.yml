@@ -91,7 +91,7 @@ nav:
   - Home: index.md
   - "비개발자 학습 가이드": beginners-guide.md
   - 사전 준비: setup.md
-  - "Day 1 — SQL · RAG · 프로젝트 (1~8H)":
+  - "Day 1":
     - day1/index.md
     - "01H. OT & 전체 데모": day1/01-ot-demo.md
     - "02H. PostgreSQL 기초": day1/02-postgres-basics.md
@@ -101,13 +101,13 @@ nav:
     - "06H. 임베딩 + ChromaDB": day1/06-embedding-chromadb.md
     - "07H. Text-to-SQL 맛보기": day1/07-text-to-sql.md
     - "08H. 프로젝트 브리핑": day1/08-project-briefing.md
-  - "Day 2 — Text-to-SQL 상담사 (9~12H)":
+  - "Day 2":
     - day2/index.md
     - "09H. 제안서 피어리뷰": day2/09-peer-review.md
     - "10H. Text-to-SQL 심화": day2/10-text-to-sql-advanced.md
     - "11H. 멀티턴 상담사": day2/11-multiturn-chatbot.md
     - "12H. Gradio UI": day2/12-gradio-ui.md
-  - "Day 3 — Vanna · LangChain · LangGraph (13~20H)":
+  - "Day 3":
     - day3/index.md
     - "13H. Vanna.ai 구조": day3/13-vanna-intro.md
     - "14H. Vanna 자가학습": day3/14-vanna-training.md
@@ -117,7 +117,7 @@ nav:
     - "18H. Advanced RAG 검색고도화": day3/18-advanced-rag-retrieval.md
     - "19H. LangGraph 개념": day3/19-langgraph-concept.md
     - "20H. SQL 에이전트 빌드": day3/20-sql-agent-build.md
-  - "Day 4 — 평가 · 발표 (21~24H)":
+  - "Day 4":
     - day4/index.md
     - "21H. LangSmith 트레이싱": day4/21-langsmith.md
     - "22H. Ragas 정량 평가": day4/22-ragas-eval.md
