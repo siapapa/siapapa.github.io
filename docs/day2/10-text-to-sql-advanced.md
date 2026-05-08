@@ -324,6 +324,7 @@ print(f"💬 커스텀 답변: {resp_custom.response[:100]}...")
 # ============================================================
 # 5. 전략 3: ObjectIndex로 관련 테이블만 자동 선택
 # ============================================================
+from llama_index.core import VectorStoreIndex
 from llama_index.core.objects import (
     SQLTableNodeMapping,
     ObjectIndex,
@@ -358,10 +359,12 @@ table_schemas = [
 table_node_mapping = SQLTableNodeMapping(sql_db)
 
 # ObjectIndex: 질문에 관련된 테이블을 벡터 검색으로 자동 선택
+# index_cls 는 VectorStoreIndex 를 명시 — 최근 LlamaIndex 에서 None 을 그대로
+# 넘기면 NoneType 호출 시점에 TypeError 가 발생.
 obj_index = ObjectIndex.from_objects(
     table_schemas,
     table_node_mapping,
-    index_cls=None,  # default VectorStoreIndex
+    index_cls=VectorStoreIndex,
 )
 
 # ObjectIndex 기반 Query Engine
