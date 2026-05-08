@@ -40,11 +40,18 @@
     ```python
     # ============================================================
     # 📦 패키지 설치 (버전 핀 — Gradio 4.x 전용 실습)
+    # ------------------------------------------------------------
+    # NumPy 2.x ABI 충돌 방지를 위해 numpy / pandas 도 명시 핀.
+    # (없으면 일부 Colab 에서 ValueError: numpy.dtype size changed.)
     # ============================================================
-    !pip install -q \
+    !pip install -q --upgrade \
+        "numpy>=2.0,<3" "pandas>=2.2.2,<3" \
         "gradio==4.44.1" \
-        "sqlalchemy>=2.0" psycopg2-binary "openai>=1.30" sqlparse pandas \
+        "sqlalchemy>=2.0" psycopg2-binary "openai>=1.30" sqlparse \
         "llama-index>=0.10.50,<0.12" llama-index-llms-openai llama-index-embeddings-openai
+
+    # 위 설치가 numpy 메이저 버전을 갈아치웠다면, 메뉴 [Runtime] → [Restart runtime]
+    # 후 이 셀부터 다시 실행하세요. (이미 import 된 옛 numpy 와 ABI 가 어긋남 방지)
 
     import os
     from google.colab import userdata
