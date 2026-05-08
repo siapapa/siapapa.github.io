@@ -324,7 +324,15 @@ print(f"💬 커스텀 답변: {resp_custom.response[:100]}...")
 # ============================================================
 # 5. 전략 3: ObjectIndex로 관련 테이블만 자동 선택
 # ============================================================
-from llama_index.core import VectorStoreIndex
+# VectorStoreIndex 임포트 — LlamaIndex 0.10.x 의 어느 변형이든 한 번에 처리
+try:
+    from llama_index.core import VectorStoreIndex
+except ImportError:
+    try:
+        from llama_index.core.indices import VectorStoreIndex
+    except ImportError:
+        from llama_index.core.indices.vector_store import VectorStoreIndex
+
 from llama_index.core.objects import (
     SQLTableNodeMapping,
     ObjectIndex,
