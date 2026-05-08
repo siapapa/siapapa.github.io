@@ -71,10 +71,16 @@ for key in prompts:
     print(f"  - {key}")
 
 # text_to_sql_prompt 내용 전체 출력
+# LlamaIndex 0.10+ 는 키에 prefix 가 붙을 수 있어("sql_retriever:text_to_sql_prompt")
+# 정확 일치 대신 "...text_to_sql_prompt" 로 끝나는 첫 키를 찾아 안전하게 접근.
+key = next((k for k in prompts if k.endswith("text_to_sql_prompt")), None)
+if key is None:
+    raise KeyError(f"text_to_sql_prompt 키를 찾지 못함. 사용 가능: {list(prompts)}")
+
 print(f"\n{'='*60}")
-print("📝 text_to_sql_prompt:")
+print(f"📝 {key}:")
 print(f"{'='*60}")
-print(prompts["text_to_sql_prompt"].template)
+print(prompts[key].template)
 ```
 
 ### 스키마가 프롬프트에 어떻게 채워지는지 확인
