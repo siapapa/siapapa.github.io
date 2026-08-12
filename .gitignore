@@ -71,6 +71,10 @@ tools/build_jupyter_notebooks.py
 # mkdocs-with-pdf 산출물 (ENABLE_PDF_EXPORT=1 mkdocs build)
 pdf/
 
+# 로컬 Jupyter 실행용 노트북 세트 — tools/build_jupyter_notebooks.py 가
+# notebooks_student/ 에서 생성하므로 저장소에 두지 않는다.
+jupyter/
+
 # Claude / Cursor 작업 메모
 .claude/
 .cursor/
