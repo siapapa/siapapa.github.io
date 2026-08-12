@@ -54,8 +54,15 @@ notebooks/
 채점결과_리포트.md
 이의신청_답변_*.md
 tools/_*.json
-# 학번·실명·점수가 코드에 하드코딩되어 있음 (tools/scan_submissions.py:112)
+
+# 채점·제출물 처리 도구 — 강사 로컬 전용, 공개 저장소에 두지 않음.
+# (scan_submissions.py 는 학번·실명·점수가 코드에 하드코딩되어 있음)
 tools/scan_submissions.py
+tools/apply_grades.py
+tools/relative_grade.py
+tools/apply_relative.py
+tools/nbstat.py
+tools/build_jupyter_notebooks.py
 
 # ============================================================
 # 로컬 생성물
