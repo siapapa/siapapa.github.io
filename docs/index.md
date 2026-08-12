@@ -1,83 +1,60 @@
 ---
 hide:
   - navigation
+  - toc
 ---
 
-# AI 기반 SQL 분석 에이전트 구축
+# 강의 자료실
 
 <div class="hero" markdown>
 
-**24시간 집중 강의 (4일 과정)**
+**실습 중심 강의 노트 · 실행 가능한 Colab 노트북 · 프로젝트 과제**
 
-자연어로 질문하면 SQL을 생성하고, 실행하고, 검증하고, 답변하는 **AI 에이전트**를 직접 만듭니다.
-
-[:material-rocket-launch: 시작하기](setup.md){ .md-button .md-button--primary }
-[:material-book-open-variant: Day 1 바로가기](day1/index.md){ .md-button }
-[:material-account-school: 비개발자 학습 가이드](beginners-guide.md){ .md-button }
+이론만 듣고 끝나지 않도록, 모든 강의는 **직접 돌려 보는 코드**와 **본인 손으로 만드는 결과물**을 중심으로 구성되어 있습니다.
 
 </div>
 
-!!! tip "코딩이 처음이거나 SQL이 낯서신가요?"
-    먼저 **[비개발자 학습 가이드](beginners-guide.md)** 를 5분만 읽고 시작하세요. 24H를 어떻게 따라가야 무리 없이 마칠 수 있는지 — 그리고 막혔을 때 어디를 보면 되는지 — 길잡이를 정리해 두었습니다. 모르는 단어가 나올 때마다 펼쳐 볼 **[용어 사전](appendix/glossary.md)** 도 함께 준비되어 있습니다.
+---
+
+## 개설 강의
+
+<div class="grid cards" markdown>
+
+-   :material-robot-happy-outline:{ .lg .middle } **AI 기반 SQL 분석 에이전트 구축**
+
+    ---
+
+    <span class="course-badge course-badge--done">진행 종료</span>
+    <span class="course-badge">24시간 · 4일</span>
+
+    자연어로 질문하면 SQL을 생성하고, 실행하고, 검증하고, 답변하는 **AI 에이전트**를 처음부터 끝까지 직접 만듭니다.
+
+    **PostgreSQL** · **LlamaIndex** · **ChromaDB** · **Vanna.ai** · **LangChain/LCEL** · **LangGraph** · **LangSmith** · **Ragas** · **Gradio**
+
+    [:octicons-arrow-right-24: 강의 자료 보기](courses/ai-sql-agent/index.md)
+
+-   :material-clock-outline:{ .lg .middle } **다음 강의 준비 중**
+
+    ---
+
+    <span class="course-badge course-badge--soon">준비 중</span>
+
+    새 강의가 열리면 이 자리에 카드가 추가됩니다. 각 강의는 서로 독립된 공간을 가지므로,
+    지난 강의 자료는 그대로 남아 계속 열람할 수 있습니다.
+
+</div>
 
 ---
 
-## 과정 구조
+## 이용 안내
 
-| Day | 시간 | 주제 | 키워드 |
-|:---:|:---:|---|---|
-| **Day 1** | 1~8H | 개관 · SQL · RAG 파이프라인 | PostgreSQL, LlamaIndex, ChromaDB, Text-to-SQL |
-| **Day 2** | 9~12H | Text-to-SQL 심화 · 상담사 | 프롬프트 튜닝, 멀티턴, Gradio |
-| **Day 3** | 13~20H | Vanna · LangChain · LangGraph | LCEL, Advanced RAG, SQL Agent |
-| **Day 4** | 21~24H | 평가 · 모니터링 · 발표 | LangSmith, Ragas, 최종 발표 |
+!!! tip "강의 자료는 계속 열려 있습니다"
+    수강이 끝난 강의도 자료는 그대로 유지됩니다. 복습하거나, 나중에 실습을 다시 돌려 볼 때 언제든 다시 찾아오세요.
 
-## 학습 여정
+!!! info "실습 환경"
+    별도 설치 없이 **Google Colab**에서 바로 실행할 수 있도록 준비되어 있습니다.
+    노트북은 *보기 전용*으로 열리므로, 상단 `파일 → 드라이브에 사본 저장` 후 본인 사본에서 자유롭게 수정하세요.
 
-```mermaid
-graph LR
-    A["Day 1<br/>재료 준비"] --> B["Day 2<br/>조리 시작"]
-    B --> C["Day 3<br/>본격 빌드"]
-    C --> D["Day 4<br/>검증 & 발표"]
-    
-    style A fill:#e3f2fd,stroke:#1565c0
-    style B fill:#e8f5e9,stroke:#2e7d32
-    style C fill:#fff3e0,stroke:#e65100
-    style D fill:#fce4ec,stroke:#c62828
-```
-
-## 사용 기술 스택
-
-| 카테고리 | 기술 |
-|---|---|
-| **데이터베이스** | PostgreSQL (Neon 클라우드) |
-| **RAG 프레임워크** | LlamaIndex, ChromaDB |
-| **Text-to-SQL** | Vanna.ai |
-| **에이전트 프레임워크** | LangChain / LCEL, LangGraph |
-| **모니터링** | LangSmith |
-| **평가** | Ragas |
-| **UI** | Gradio |
-| **실행 환경** | Google Colab |
-
-## 최종 산출물
-
-4일 후 여러분은 아래와 같은 SQL 분석 에이전트를 직접 구축합니다:
-
-```mermaid
-graph TD
-    Q["사용자 질문"] --> GEN["SQL 생성<br/>(LLM)"]
-    GEN --> RUN["SQL 실행<br/>(PostgreSQL)"]
-    RUN --> VAL{"검증"}
-    VAL -->|성공| ANS["자연어 답변"]
-    VAL -->|실패| GEN
-    ANS --> U["사용자에게 전달"]
-    
-    style Q fill:#e3f2fd
-    style ANS fill:#e8f5e9
-```
-
----
-
-!!! info "수업 형식"
-    각 시간 = **50분 강의 + 10분 휴식** | 이론 30% · 실습 70%
-    
-    모든 실습은 **Google Colab**에서 진행되므로 별도 설치가 필요 없습니다.
+!!! note "이전 링크를 저장해 두셨다면"
+    사이트 구조 개편으로 강의 페이지 주소가 `/courses/ai-sql-agent/…` 로 바뀌었습니다.
+    예전 주소(`/day1/`, `/setup/` 등)로 들어오셔도 새 주소로 자동 이동하니 그대로 사용하셔도 됩니다.

@@ -1,5 +1,8 @@
-site_name: AI 기반 SQL 분석 에이전트 구축
-site_description: 24시간 집중 강의 — PostgreSQL · LlamaIndex · Vanna · LangChain · LangGraph · Ragas
+# 이 사이트는 "강의 포털" 입니다. 개별 강의는 docs/courses/<slug>/ 아래에 하나씩
+# 독립된 트리로 들어가고, docs/index.md 가 그 목록(카탈로그)을 보여 줍니다.
+# 새 강의 추가 절차는 저장소 루트의 ADDING_A_COURSE.md 를 참고하세요.
+site_name: JY Lab 강의 Archive
+site_description: AI · 데이터 · SQL 실습 중심 강의 자료 모음
 site_author: Jaeyoo
 # User Pages 저장소(<username>.github.io)는 서브경로 없이 루트로 게시됩니다.
 site_url: https://siapapa.github.io/
@@ -68,6 +71,46 @@ markdown_extensions:
 plugins:
   - search:
       lang: en
+  # 강의를 courses/<slug>/ 하위로 옮기면서 깨진 예전 URL(/day1/, /setup/ 등)을
+  # 새 경로로 자동 전환. 수강생 북마크·공유 링크가 계속 살아 있도록 유지합니다.
+  # 강의가 더 추가돼도 이 블록은 "AI SQL 에이전트" 1기 전용 — 건드릴 필요 없음.
+  - redirects:
+      redirect_maps:
+        setup.md: courses/ai-sql-agent/setup.md
+        beginners-guide.md: courses/ai-sql-agent/beginners-guide.md
+        day1/index.md: courses/ai-sql-agent/day1/index.md
+        day1/01-ot-demo.md: courses/ai-sql-agent/day1/01-ot-demo.md
+        day1/02-postgres-basics.md: courses/ai-sql-agent/day1/02-postgres-basics.md
+        day1/03-sql-advanced.md: courses/ai-sql-agent/day1/03-sql-advanced.md
+        day1/04-schema-intelligence.md: courses/ai-sql-agent/day1/04-schema-intelligence.md
+        day1/05-llamaindex-intro.md: courses/ai-sql-agent/day1/05-llamaindex-intro.md
+        day1/06-embedding-chromadb.md: courses/ai-sql-agent/day1/06-embedding-chromadb.md
+        day1/07-text-to-sql.md: courses/ai-sql-agent/day1/07-text-to-sql.md
+        day1/08-project-briefing.md: courses/ai-sql-agent/day1/08-project-briefing.md
+        day2/index.md: courses/ai-sql-agent/day2/index.md
+        day2/09-peer-review.md: courses/ai-sql-agent/day2/09-peer-review.md
+        day2/10-text-to-sql-advanced.md: courses/ai-sql-agent/day2/10-text-to-sql-advanced.md
+        day2/11-multiturn-chatbot.md: courses/ai-sql-agent/day2/11-multiturn-chatbot.md
+        day2/12-gradio-ui.md: courses/ai-sql-agent/day2/12-gradio-ui.md
+        day3/index.md: courses/ai-sql-agent/day3/index.md
+        day3/13-vanna-intro.md: courses/ai-sql-agent/day3/13-vanna-intro.md
+        day3/14-vanna-training.md: courses/ai-sql-agent/day3/14-vanna-training.md
+        day3/15-langchain-lcel.md: courses/ai-sql-agent/day3/15-langchain-lcel.md
+        day3/16-lcel-rag-chain.md: courses/ai-sql-agent/day3/16-lcel-rag-chain.md
+        day3/17-advanced-rag-query.md: courses/ai-sql-agent/day3/17-advanced-rag-query.md
+        day3/18-advanced-rag-retrieval.md: courses/ai-sql-agent/day3/18-advanced-rag-retrieval.md
+        day3/19-langgraph-concept.md: courses/ai-sql-agent/day3/19-langgraph-concept.md
+        day3/20-sql-agent-build.md: courses/ai-sql-agent/day3/20-sql-agent-build.md
+        day4/index.md: courses/ai-sql-agent/day4/index.md
+        day4/21-langsmith.md: courses/ai-sql-agent/day4/21-langsmith.md
+        day4/22-ragas-eval.md: courses/ai-sql-agent/day4/22-ragas-eval.md
+        day4/23-final-tuning.md: courses/ai-sql-agent/day4/23-final-tuning.md
+        day4/24-final-presentation.md: courses/ai-sql-agent/day4/24-final-presentation.md
+        appendix/glossary.md: courses/ai-sql-agent/appendix/glossary.md
+        appendix/notebook-numbering.md: courses/ai-sql-agent/appendix/notebook-numbering.md
+        appendix/troubleshooting.md: courses/ai-sql-agent/appendix/troubleshooting.md
+        appendix/project-brief.md: courses/ai-sql-agent/appendix/project-brief.md
+        appendix/free-llm-ollama.md: courses/ai-sql-agent/appendix/free-llm-ollama.md
   # with-pdf 는 CI(requirements-docs.txt)에 미설치 + --strict 모드에서 "PDF disabled"
   # 경고가 fatal 로 처리돼 GitHub Pages 배포가 막혀 일시 비활성화.
   # PDF 가 필요하면: (1) `pip install mkdocs-with-pdf` 후 (2) 아래 블록 주석 해제,
@@ -87,45 +130,50 @@ extra_css:
 extra_javascript:
   - javascripts/colab-links.js
 
+# nav 최상위 = 상단 탭. "강의 목록"(포털 홈) 다음에 강의를 하나씩 탭으로 추가합니다.
+# 새 강의는 아래 "AI SQL 에이전트 (24H)" 블록을 통째로 복사해 slug 만 바꾸면 됩니다.
 nav:
-  - Home: index.md
-  - "비개발자 학습 가이드": beginners-guide.md
-  - 사전 준비: setup.md
-  - "Day 1":
-    - day1/index.md
-    - "01H. OT & 전체 데모": day1/01-ot-demo.md
-    - "02H. PostgreSQL 기초": day1/02-postgres-basics.md
-    - "03H. 집계 · 조인 · CTE": day1/03-sql-advanced.md
-    - "04H. Schema Intelligence": day1/04-schema-intelligence.md
-    - "05H. LlamaIndex 개론": day1/05-llamaindex-intro.md
-    - "06H. 임베딩 + ChromaDB": day1/06-embedding-chromadb.md
-    - "07H. Text-to-SQL 맛보기": day1/07-text-to-sql.md
-    - "08H. 프로젝트 브리핑": day1/08-project-briefing.md
-  - "Day 2":
-    - day2/index.md
-    - "09H. 제안서 피어리뷰": day2/09-peer-review.md
-    - "10H. Text-to-SQL 심화": day2/10-text-to-sql-advanced.md
-    - "11H. 멀티턴 상담사": day2/11-multiturn-chatbot.md
-    - "12H. Gradio UI": day2/12-gradio-ui.md
-  - "Day 3":
-    - day3/index.md
-    - "13H. Vanna.ai 구조": day3/13-vanna-intro.md
-    - "14H. Vanna 자가학습": day3/14-vanna-training.md
-    - "15H. LangChain & LCEL": day3/15-langchain-lcel.md
-    - "16H. LCEL RAG 체인": day3/16-lcel-rag-chain.md
-    - "17H. Advanced RAG 쿼리변환": day3/17-advanced-rag-query.md
-    - "18H. Advanced RAG 검색고도화": day3/18-advanced-rag-retrieval.md
-    - "19H. LangGraph 개념": day3/19-langgraph-concept.md
-    - "20H. SQL 에이전트 빌드": day3/20-sql-agent-build.md
-  - "Day 4":
-    - day4/index.md
-    - "21H. LangSmith 트레이싱": day4/21-langsmith.md
-    - "22H. Ragas 정량 평가": day4/22-ragas-eval.md
-    - "23H. 최종 튜닝 & 리허설": day4/23-final-tuning.md
-    - "24H. 최종 발표 & 수료": day4/24-final-presentation.md
-  - 부록:
-    - "용어 사전": appendix/glossary.md
-    - "노트북 번호 체계": appendix/notebook-numbering.md
-    - "트러블슈팅": appendix/troubleshooting.md
-    - "프로젝트 브리프": appendix/project-brief.md
-    - "무료 LLM · Ollama (Qwen3)": appendix/free-llm-ollama.md
+  - "강의 목록": index.md
+
+  - "AI SQL 에이전트 (24H)":
+    - courses/ai-sql-agent/index.md
+    - "비개발자 학습 가이드": courses/ai-sql-agent/beginners-guide.md
+    - 사전 준비: courses/ai-sql-agent/setup.md
+    - "Day 1":
+      - courses/ai-sql-agent/day1/index.md
+      - "01H. OT & 전체 데모": courses/ai-sql-agent/day1/01-ot-demo.md
+      - "02H. PostgreSQL 기초": courses/ai-sql-agent/day1/02-postgres-basics.md
+      - "03H. 집계 · 조인 · CTE": courses/ai-sql-agent/day1/03-sql-advanced.md
+      - "04H. Schema Intelligence": courses/ai-sql-agent/day1/04-schema-intelligence.md
+      - "05H. LlamaIndex 개론": courses/ai-sql-agent/day1/05-llamaindex-intro.md
+      - "06H. 임베딩 + ChromaDB": courses/ai-sql-agent/day1/06-embedding-chromadb.md
+      - "07H. Text-to-SQL 맛보기": courses/ai-sql-agent/day1/07-text-to-sql.md
+      - "08H. 프로젝트 브리핑": courses/ai-sql-agent/day1/08-project-briefing.md
+    - "Day 2":
+      - courses/ai-sql-agent/day2/index.md
+      - "09H. 제안서 피어리뷰": courses/ai-sql-agent/day2/09-peer-review.md
+      - "10H. Text-to-SQL 심화": courses/ai-sql-agent/day2/10-text-to-sql-advanced.md
+      - "11H. 멀티턴 상담사": courses/ai-sql-agent/day2/11-multiturn-chatbot.md
+      - "12H. Gradio UI": courses/ai-sql-agent/day2/12-gradio-ui.md
+    - "Day 3":
+      - courses/ai-sql-agent/day3/index.md
+      - "13H. Vanna.ai 구조": courses/ai-sql-agent/day3/13-vanna-intro.md
+      - "14H. Vanna 자가학습": courses/ai-sql-agent/day3/14-vanna-training.md
+      - "15H. LangChain & LCEL": courses/ai-sql-agent/day3/15-langchain-lcel.md
+      - "16H. LCEL RAG 체인": courses/ai-sql-agent/day3/16-lcel-rag-chain.md
+      - "17H. Advanced RAG 쿼리변환": courses/ai-sql-agent/day3/17-advanced-rag-query.md
+      - "18H. Advanced RAG 검색고도화": courses/ai-sql-agent/day3/18-advanced-rag-retrieval.md
+      - "19H. LangGraph 개념": courses/ai-sql-agent/day3/19-langgraph-concept.md
+      - "20H. SQL 에이전트 빌드": courses/ai-sql-agent/day3/20-sql-agent-build.md
+    - "Day 4":
+      - courses/ai-sql-agent/day4/index.md
+      - "21H. LangSmith 트레이싱": courses/ai-sql-agent/day4/21-langsmith.md
+      - "22H. Ragas 정량 평가": courses/ai-sql-agent/day4/22-ragas-eval.md
+      - "23H. 최종 튜닝 & 리허설": courses/ai-sql-agent/day4/23-final-tuning.md
+      - "24H. 최종 발표 & 수료": courses/ai-sql-agent/day4/24-final-presentation.md
+    - 부록:
+      - "용어 사전": courses/ai-sql-agent/appendix/glossary.md
+      - "노트북 번호 체계": courses/ai-sql-agent/appendix/notebook-numbering.md
+      - "트러블슈팅": courses/ai-sql-agent/appendix/troubleshooting.md
+      - "프로젝트 브리프": courses/ai-sql-agent/appendix/project-brief.md
+      - "무료 LLM · Ollama (Qwen3)": courses/ai-sql-agent/appendix/free-llm-ollama.md

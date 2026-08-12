@@ -3,3 +3,6 @@
 mkdocs==1.6.1
 mkdocs-material>=9.5,<10
 pymdown-extensions>=10.7
+# 강의를 courses/<slug>/ 로 옮기면서 생긴 예전 URL 을 새 경로로 전환 (mkdocs.yml 의 redirects 플러그인)
+# 1.2.3 은 mkdocs 를 리네임한 'properdocs' 패키지를 추가로 끌어오므로 1.2.2 에 고정.
+mkdocs-redirects==1.2.2

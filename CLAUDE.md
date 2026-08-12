@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository purpose
 
-This is **not a software codebase**. It is a working directory for preparing a 24-hour university course titled **"AI 기반 SQL 분석 에이전트 구축"** (AI-Driven SQL Analytics Agent), delivered as an Assist 집중강의 (modular intensive lecture) over 4 days.
+This is **not a software codebase**. It is (a) a working directory for preparing lecture materials, and (b) the source of the **lecture portal published at https://siapapa.github.io/** (GitHub Pages, MkDocs Material, deployed by `.github/workflows/deploy.yml` on push to `main`).
+
+The portal hosts **multiple courses**. The first one is a 24-hour university course titled **"AI 기반 SQL 분석 에이전트 구축"** (AI-Driven SQL Analytics Agent), delivered as an Assist 집중강의 (modular intensive lecture) over 4 days — most of this file describes that course. Additional courses get their own folder under `docs/courses/` and are listed as cards on the portal home.
 
 The deliverables being produced here are **lecture materials**: a course design document, per-hour session plans, Google Colab notebooks for hands-on labs, and a project brief for students' final capstone.
 
@@ -17,6 +19,24 @@ The deliverables being produced here are **lecture materials**: a course design 
   - `AI 기반 SQL 분석 강의 설계.md` — prior design notes.
 
 New lecture materials (design docs, notebooks, project briefs) should be created at the repository root or in new top-level folders — **not** inside `참고자료/`.
+
+### Published site (`docs/`) — course-per-folder layout
+
+```
+docs/
+├─ index.md                  ← 포털 홈: 강의 카탈로그 (grid cards)
+├─ courses/<slug>/           ← 강의 하나 = 폴더 하나, 자체 index.md 를 첫 페이지로
+│   └─ ai-sql-agent/         ← 24H AI SQL 에이전트 (index / setup / beginners-guide / day1~day4 / appendix)
+├─ stylesheets/extra.css     ← 전 강의 공용
+└─ javascripts/colab-links.js
+```
+
+Rules that must hold when touching the site:
+
+- A course links **only relatively, within its own `courses/<slug>/` subtree** — never `/day1/…` style absolute paths, so a course folder stays relocatable.
+- `mkdocs.yml` `nav`: one top-level entry per course (= one top tab). The `redirects` plugin block maps the pre-restructure root URLs (`day1/…`, `setup.md`, `appendix/…`) onto `courses/ai-sql-agent/…` and is specific to that first course — new courses need no entries there.
+- Step-by-step procedure for adding a course, plus the badge/card conventions, lives in **`ADDING_A_COURSE.md`** at the repo root (not published).
+- Verify with `.venv/bin/mkdocs build --strict` — CI builds with `--strict`, so any broken internal link fails the deploy.
 
 ## Course design constraints (load-bearing)
 
@@ -85,7 +105,8 @@ All student-facing materials (slides, notebook markdown, project brief, assessme
 - **`Lecture_Day2.md`** — Day 2 (9~12H) 상세 강의자료. 피어리뷰·NLSQLTableQueryEngine 심화·멀티턴 상담사·Gradio UI.
 - **`Lecture_Day3.md`** — Day 3 (13~20H) 상세 강의자료. Vanna·LangChain/LCEL·Advanced RAG·LangGraph SQL 에이전트 빌드.
 - **`Lecture_Day4.md`** — Day 4 (21~24H) 상세 강의자료. LangSmith 트레이싱·Ragas 정량 평가·최종 발표·수료.
-- **`docs/appendix/free-llm-ollama.md` + `notebooks/99_free_llm_ollama.ipynb`** — OpenAI 비용 부담 완화용 부록. Colab에서 Ollama(Qwen3) 띄우기 / Groq 무료 Tier / LlamaIndex·LangChain·Vanna LLM 초기화 교체 레시피. mkdocs nav · `setup.md` · `colab-links.js` 등록 완료.
+- **강의 포털 구조 개편 (2026-08-12)** — 사이트를 "강의 1개"에서 "강의 여러 개를 담는 포털"로 전환. 기존 24H 강의를 `docs/courses/ai-sql-agent/` 로 이동, `docs/index.md` 를 강의 카탈로그로 교체, `mkdocs-redirects` 로 예전 URL 유지, `notebooks_student/*.ipynb` 의 절대 URL 갱신, `ADDING_A_COURSE.md` 작성.
+- **`docs/courses/ai-sql-agent/appendix/free-llm-ollama.md` + `notebooks/99_free_llm_ollama.ipynb`** — OpenAI 비용 부담 완화용 부록. Colab에서 Ollama(Qwen3) 띄우기 / Groq 무료 Tier / LlamaIndex·LangChain·Vanna LLM 초기화 교체 레시피. mkdocs nav · `setup.md` · `colab-links.js` 등록 완료.
 
 ### 🔜 다음 작업 후보 (우선순위 미정, 사용자 확인 필요)
 1. **Colab 노트북 실제 구현** — `Lecture_Day*.md`의 코드를 실행 가능한 `.ipynb`로 분할 제작. 번호 체계 `00_demo_agent.ipynb` ~ `19_ragas_eval.ipynb`.

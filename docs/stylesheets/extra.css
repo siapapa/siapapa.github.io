@@ -48,6 +48,86 @@
   margin-bottom: 0.5em;
 }
 
+/* ============================================================
+ * 강의 포털(홈) — 강의 카드 & 상태 뱃지
+ * ============================================================ */
+
+/* 강의 카드 그리드는 Material 의 .grid.cards 를 그대로 사용하고,
+   호버 시 살짝 떠오르는 효과만 추가 */
+.md-typeset .grid.cards > ul > li {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+}
+
+/* 상태/메타 뱃지 — 기본은 중립(회색) */
+.course-badge {
+  display: inline-block;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 0.15em 0.6em;
+  margin: 0 0.25em 0.4em 0;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--md-default-fg-color--light);
+  white-space: nowrap;
+}
+
+/* 진행 중 — 초록 */
+.course-badge--live {
+  background: rgba(46, 125, 50, 0.14);
+  color: #2e7d32;
+}
+
+/* 진행 종료 — 남색(테마 primary 계열) */
+.course-badge--done {
+  background: rgba(63, 81, 181, 0.14);
+  color: #3f51b5;
+}
+
+/* 준비 중 — 주황 */
+.course-badge--soon {
+  background: rgba(255, 152, 0, 0.16);
+  color: #c47600;
+}
+
+/* 강의 페이지 상단의 "전체 강의 목록" 되돌아가기 링크 */
+.course-backlink {
+  display: inline-block;
+  font-size: 0.82em;
+  font-weight: 600;
+  opacity: 0.75;
+  margin-bottom: 0.4rem;
+}
+
+.course-backlink:hover {
+  opacity: 1;
+}
+
+/* 다크 모드 보정 */
+[data-md-color-scheme="slate"] .course-badge {
+  background: rgba(255, 255, 255, 0.10);
+}
+[data-md-color-scheme="slate"] .course-badge--live {
+  background: rgba(102, 187, 106, 0.18);
+  color: #81c784;
+}
+[data-md-color-scheme="slate"] .course-badge--done {
+  background: rgba(121, 134, 203, 0.20);
+  color: #9fa8da;
+}
+[data-md-color-scheme="slate"] .course-badge--soon {
+  background: rgba(255, 152, 0, 0.20);
+  color: #ffb74d;
+}
+[data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
 /* Colab 실습 노트북 링크 박스 */
 .colab-link-box {
   border: 1px solid var(--md-primary-fg-color);
