@@ -12,13 +12,41 @@ The deliverables being produced here are **lecture materials**: a course design 
 
 ## Directory layout
 
-- `참고자료/` — source materials only; treat as **read-only reference**.
-  - `AI 기반 SQL 분석 에이전트 구축 교육 과정.md` — **the authoritative syllabus** for this course. All lecture design must align with its 24H breakdown, 7:3 practice-to-theory ratio, and tool stack.
-  - `현장에서 바로 써먹는 SQL with PostgreSQL.pdf.md` — primary textbook (김임용), used for the PostgreSQL/SQL portion of Day 1.
+**The repository root holds the site and nothing else.** Everything to do with running a
+particular cohort — 원고, 노트북, 참고자료, 학생 자료 — lives in a per-cohort folder that is
+`.gitignore`d and therefore local-only.
+
+```
+<repo root>
+├─ docs/                  ← 발행되는 사이트 콘텐츠 (아래 참조)
+├─ mkdocs.yml             ← 사이트 설정
+├─ requirements-docs.txt  ← CI 가 설치하는 것 (문서 빌드 전용)
+├─ .github/workflows/     ← GitHub Pages 배포
+├─ ADDING_A_COURSE.md     ← 새 강의 추가 절차 (비공개)
+├─ CLAUDE.md              ← 이 파일
+└─ Assist2026-01/         ← ⚠️ gitignore — 1기 운영 자료 전체 (로컬 전용)
+```
+
+### `Assist<연도>-<기수>/` — cohort working folder (git 밖)
+
+Not in the repository. Do not try to `git add` anything inside it, and never move its
+contents to a tracked path. It contains, for the 2026-01 cohort:
+
+- `Lecture.md`, `Lecture_Day1~4.md`, `강의자료_Day1~4.md` — 강의 원고. `docs/courses/ai-sql-agent/` 페이지들의 **원본**이므로 내용 수정 시 양쪽을 함께 맞춘다.
+- `PROJECT_BRIEF.md`, `notebooks_plan.md`, `Code_Guide.md`
+- `notebooks_student/` (수강생 배포본) · `notebooks/` (강사용, 정답 포함) · `jupyter/` (로컬 실행용 생성본)
+- `tools/` — 자료 빌드 + 채점·제출물 처리 스크립트
+- `참고자료/` — **read-only reference**, 저작권 자료라 외부 공개 금지
+  - `AI 기반 SQL 분석 에이전트 구축 교육 과정.md` — **the authoritative syllabus**. All lecture design must align with its 24H breakdown, 7:3 practice-to-theory ratio, and tool stack.
+  - `현장에서 바로 써먹는 SQL with PostgreSQL.pdf.md` — primary textbook (김임용), Day 1 PostgreSQL 파트.
   - `붙임2. 국문 과목설명서.docx.md`, `붙임3. 영문 과목설명서.docx.md` — **previous-version** course descriptions. Reference only; do not treat as current spec.
   - `AI 기반 SQL 분석 강의 설계.md` — prior design notes.
+- `과제/`, `정답_예시_*/`, `*성적시트*.xlsx`, `채점결과_리포트.md`, `이의신청_답변_*.md` — **학생 개인정보**(학번·실명·점수·제출물, 일부 제출물엔 DSN·API Key 포함). 어떤 경우에도 저장소나 외부로 옮기지 않는다.
 
-New lecture materials (design docs, notebooks, project briefs) should be created at the repository root or in new top-level folders — **not** inside `참고자료/`.
+The tree as it stood before this cleanup — when those files were still tracked — is preserved
+at tag `archive/assist2026-01` (`git checkout archive/assist2026-01 -- <path>`).
+
+New cohorts get their own `Assist<연도>-<기수>/` folder plus a `.gitignore` entry.
 
 ### Published site (`docs/`) — course-per-folder layout
 
@@ -97,7 +125,11 @@ All student-facing materials (slides, notebook markdown, project brief, assessme
 
 ## Progress log
 
+> 아래 완료 항목 중 `Lecture*.md` · `PROJECT_BRIEF.md` · `notebooks*/` 등 강의 원고·노트북은
+> 현재 **`Assist2026-01/` 아래(git 밖)** 에 있습니다. 경로는 그 폴더 기준으로 읽으세요.
+
 ### ✅ 완료
+- **저장소 루트 정리 (2026-08-12)** — 루트에 사이트 관련 파일만 남기고, 1기 운영 자료 일체를 `Assist2026-01/` 로 이동 후 `.gitignore` 등록. 이동 직전 상태는 태그 `archive/assist2026-01` 로 보존.
 - **`CLAUDE.md`** — 저장소 목적, 설계 제약, 시간별 주요 내용 정리.
 - **`Lecture.md` (v0.1 초안)** — 24H 전 과정 강의자료 초안. 각 시간별 학습목표·핵심 개념·실습 코드 스니펫·과제 연결 포함. 사전 준비, Day 1~4 본문, 부록(리포 구조/트러블슈팅/참고자료) 구성. 슬라이드화 및 Colab 노트북 분할을 전제로 작성됨.
 - **`PROJECT_BRIEF.md`** — Day 1 8H 배포용 최종 프로젝트 브리핑. 4단계 마일스톤·제안서 양식·스키마 설계 원칙·평가 루브릭·발표 가이드·FAQ·템플릿 포함.
@@ -127,6 +159,7 @@ All student-facing materials (slides, notebook markdown, project brief, assessme
 
 ## Working style for this repo
 
-- There is no build, test, or lint. "Running" a notebook means opening it in Colab.
-- Before proposing structural changes to the course design, re-read `참고자료/AI 기반 SQL 분석 에이전트 구축 교육 과정.md` — it is the source of truth the user anchors on.
+- The only build is the site: `.venv/bin/mkdocs build --strict`. CI uses `--strict` too, so a broken internal link fails the deploy. "Running" a notebook still means opening it in Colab.
+- Before proposing structural changes to the course design, re-read `Assist2026-01/참고자료/AI 기반 SQL 분석 에이전트 구축 교육 과정.md` — it is the source of truth the user anchors on.
 - The user iterates on design first, then asks for artifacts. Do not start producing notebooks until the design for that day is confirmed.
+- Anything under `Assist<연도>-<기수>/` is deliberately outside git. Never stage it, and never propose moving it into `docs/` — the site is public.
