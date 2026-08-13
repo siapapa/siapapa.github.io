@@ -33,16 +33,43 @@ hide:
 
     [:octicons-arrow-right-24: 강의 자료 보기](courses/ai-sql-agent/index.md)
 
--   :material-clock-outline:{ .lg .middle } **다음 강의 준비 중**
+-   :material-cube-scan:{ .lg .middle } **Omniverse 디지털트윈 기초**
 
     ---
 
     <span class="course-badge course-badge--soon">준비 중</span>
+    <span class="course-badge">16시간 · 2일</span>
 
-    새 강의가 열리면 이 자리에 카드가 추가됩니다. 각 강의는 서로 독립된 공간을 가지므로,
-    지난 강의 자료는 그대로 남아 계속 열람할 수 있습니다.
+    3D 모델을 **살아 움직이는 디지털트윈**으로 만듭니다. 설비 데이터가 흘러 들어와
+    씬이 반응하고, 이상이 색으로 드러나고, "해 보기 전에" 결과를 예측합니다.
+
+    **OpenUSD** · **Omniverse Kit** · **PhysX** · **OmniGraph**
+
+    [:octicons-arrow-right-24: 강의 자료 보기](courses/omniverse-digital-twin/index.md)
+
+-   :material-robot-industrial:{ .lg .middle } **Isaac Sim 로보틱스 & AI 연계**
+
+    ---
+
+    <span class="course-badge course-badge--soon">준비 중</span>
+    <span class="course-badge">24시간 · 3일</span>
+    <span class="course-badge course-badge--req">RTX 4080 필수</span>
+
+    로봇을 시뮬레이션에 올리고 **강화학습으로 동작을 학습**시킵니다.
+    합성 데이터로 비전 모델을 만들고, 결과를 자연어로 물어보는 데까지 갑니다.
+
+    **Isaac Sim** · **Isaac Lab** · **Replicator** · **PyTorch** · **LangChain**
+
+    [:octicons-arrow-right-24: 강의 자료 보기](courses/isaac-sim-robotics/index.md)
 
 </div>
+
+!!! tip "Omniverse 두 과정은 이어집니다"
+    **기초 과정**에서 만든 공장 씬 위에, **로보틱스 과정**에서 로봇을 올려 움직이게 합니다.
+    다만 각각 독립적으로 수료할 수 있으니, 기초만 들으셔도 자기 산출물을 갖고 마칩니다.
+
+    ⚠️ 로보틱스 과정은 **RTX 4080 / 16GB VRAM 이상**이 필요합니다.
+    등록 전 [사양 확인](courses/isaac-sim-robotics/setup.md)을 꼭 해 주세요.
 
 ---
 

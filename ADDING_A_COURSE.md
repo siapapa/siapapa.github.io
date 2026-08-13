@@ -83,6 +83,7 @@ nav:
 | `course-badge--live` | 초록 | 진행 중 |
 | `course-badge--done` | 남색 | 진행 종료 (자료는 계속 열람 가능) |
 | `course-badge--soon` | 주황 | 준비 중 / 개설 예정 |
+| `course-badge--req` | 빨강 | **필수 요건** (사양 미달 시 수강 불가) |
 | (클래스 없음) | 회색 | 시수·기간 등 메타 정보 |
 
 ### 4. 빌드 확인
@@ -95,6 +96,22 @@ nav:
 `main` 에 푸시하면 `.github/workflows/deploy.yml` 이 자동으로 GitHub Pages 에 배포합니다.
 
 ## 공용 자산 사용법
+
+### 실습 자산 링크 — 두 가지 방식
+
+강의 성격에 맞는 쪽을 고르세요.
+
+| 방식 | 쓰는 곳 | 스크립트 |
+|---|---|---|
+| **Colab 링크** | 브라우저에서 노트북을 여는 과정 | `colab-links.js` |
+| **저장소 링크** | 로컬 PC 에서 스크립트를 실행하는 과정 | `lab-links.js` |
+
+저장소 방식은 페이지에 아래 한 줄을 두고, `lab-links.js` 의 `LAB_REPOS` 에
+과정 정보를 채웁니다. `url` 을 빈 문자열로 두면 "준비 중" 으로 표시됩니다.
+
+```html
+<div class="lab-link" data-course="omniverse-digital-twin"></div>
+```
 
 ### Colab 노트북 링크
 

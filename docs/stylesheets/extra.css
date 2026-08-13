@@ -89,6 +89,12 @@
   color: #3f51b5;
 }
 
+/* 필수 요건 — 빨강. 사양 미달 시 수강이 불가능한 조건에만 씁니다. */
+.course-badge--req {
+  background: rgba(198, 40, 40, 0.14);
+  color: #c62828;
+}
+
 /* 준비 중 — 주황 */
 .course-badge--soon {
   background: rgba(255, 152, 0, 0.16);
@@ -120,12 +126,115 @@
   background: rgba(121, 134, 203, 0.20);
   color: #9fa8da;
 }
+[data-md-color-scheme="slate"] .course-badge--req {
+  background: rgba(229, 115, 115, 0.20);
+  color: #ef9a9a;
+}
 [data-md-color-scheme="slate"] .course-badge--soon {
   background: rgba(255, 152, 0, 0.20);
   color: #ffb74d;
 }
 [data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* ============================================================
+ * 실습 자산 링크 박스 (lab-links.js)
+ * ------------------------------------------------------------
+ * Colab 박스와 형태를 맞추되, 로컬 실행 과정임을 색으로 구분한다.
+ * ============================================================ */
+
+.lab-link-box {
+  border: 1px solid #2e7d32;
+  border-left: 4px solid #2e7d32;
+  border-radius: 6px;
+  background: rgba(46, 125, 50, 0.05);
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+}
+
+.lab-link-box--pending {
+  border-color: #ff9800;
+  background: rgba(255, 152, 0, 0.06);
+}
+
+.lab-link-box__title {
+  font-weight: 700;
+  font-size: 1.02em;
+  margin-bottom: 0.6rem;
+}
+
+.lab-link-box__title code {
+  font-size: 0.92em;
+  background: rgba(0, 0, 0, 0.06);
+  padding: 0 0.3em;
+  border-radius: 3px;
+}
+
+.lab-link-box__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.lab-link-box__btn {
+  display: inline-block;
+  background: #2e7d32;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 0.45em 1em;
+  border-radius: 4px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lab-link-box__btn:hover {
+  background: #1b5e20;
+}
+
+.lab-link-box__instructions {
+  flex: 1 1 280px;
+  font-size: 0.92em;
+  line-height: 1.55;
+}
+
+.lab-link-box__instructions ol {
+  margin: 0.2em 0 0.4em 1.2em;
+  padding: 0;
+}
+
+.lab-link-box__instructions li {
+  margin-bottom: 0.2em;
+}
+
+.lab-link-box__instructions p {
+  margin: 0.4em 0 0;
+  opacity: 0.85;
+}
+
+.lab-link-box__pending {
+  color: #c47600;
+  font-weight: 600;
+}
+
+/* 다크 모드 보정 */
+[data-md-color-scheme="slate"] .lab-link-box {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: #66bb6a;
+  border-left-color: #66bb6a;
+}
+[data-md-color-scheme="slate"] .lab-link-box--pending {
+  background: rgba(255, 152, 0, 0.10);
+  border-color: #ffb74d;
+  border-left-color: #ffb74d;
+}
+[data-md-color-scheme="slate"] .lab-link-box__title code {
+  background: rgba(255, 255, 255, 0.10);
+}
+[data-md-color-scheme="slate"] .lab-link-box__btn {
+  background: #43a047;
 }
 
 /* Colab 실습 노트북 링크 박스 */

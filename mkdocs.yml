@@ -128,7 +128,8 @@ extra_css:
   - stylesheets/extra.css
 
 extra_javascript:
-  - javascripts/colab-links.js
+  - javascripts/colab-links.js      # Colab 기반 과정용
+  - javascripts/lab-links.js        # 로컬 실행 과정용 (Omniverse 계열)
 
 # nav 최상위 = 상단 탭. "강의 목록"(포털 홈) 다음에 강의를 하나씩 탭으로 추가합니다.
 # 새 강의는 아래 "AI SQL 에이전트 (24H)" 블록을 통째로 복사해 slug 만 바꾸면 됩니다.
@@ -177,3 +178,16 @@ nav:
       - "트러블슈팅": courses/ai-sql-agent/appendix/troubleshooting.md
       - "프로젝트 브리프": courses/ai-sql-agent/appendix/project-brief.md
       - "무료 LLM · Ollama (Qwen3)": courses/ai-sql-agent/appendix/free-llm-ollama.md
+
+  - "Omniverse 디지털트윈 (16H)":
+    - courses/omniverse-digital-twin/index.md
+    - 커리큘럼: courses/omniverse-digital-twin/curriculum.md
+    - 사전 준비: courses/omniverse-digital-twin/setup.md
+    - 실습 자산: courses/omniverse-digital-twin/labs.md
+
+  - "Isaac Sim 로보틱스 (24H)":
+    - courses/isaac-sim-robotics/index.md
+    - 커리큘럼: courses/isaac-sim-robotics/curriculum.md
+    - 사전 준비: courses/isaac-sim-robotics/setup.md
+    - 실습 자산: courses/isaac-sim-robotics/labs.md
+

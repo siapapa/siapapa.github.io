@@ -137,6 +137,7 @@ All student-facing materials (slides, notebook markdown, project brief, assessme
 - **`Lecture_Day2.md`** — Day 2 (9~12H) 상세 강의자료. 피어리뷰·NLSQLTableQueryEngine 심화·멀티턴 상담사·Gradio UI.
 - **`Lecture_Day3.md`** — Day 3 (13~20H) 상세 강의자료. Vanna·LangChain/LCEL·Advanced RAG·LangGraph SQL 에이전트 빌드.
 - **`Lecture_Day4.md`** — Day 4 (21~24H) 상세 강의자료. LangSmith 트레이싱·Ragas 정량 평가·최종 발표·수료.
+- **Omniverse 디지털트윈 2개 과정 발행 (2026-08-13)** — 신규 과정 A(`docs/courses/omniverse-digital-twin/`, 16H)·B(`docs/courses/isaac-sim-robotics/`, 24H)를 사이트에 발행. 개요·커리큘럼·사전준비·실습안내 4페이지씩, 상태는 '준비 중'. 로컬 실행 과정용 `lab-links.js` 신설(Colab 방식이 맞지 않음), `course-badge--req`(필수 요건) 뱃지 추가. 시간별 상세 페이지는 RTX PC 검증 후 추가 예정. 설계·실습자산 원본은 `Digital Twin/`(gitignore).
 - **강의 포털 구조 개편 (2026-08-12)** — 사이트를 "강의 1개"에서 "강의 여러 개를 담는 포털"로 전환. 기존 24H 강의를 `docs/courses/ai-sql-agent/` 로 이동, `docs/index.md` 를 강의 카탈로그로 교체, `mkdocs-redirects` 로 예전 URL 유지, `notebooks_student/*.ipynb` 의 절대 URL 갱신, `ADDING_A_COURSE.md` 작성.
 - **`docs/courses/ai-sql-agent/appendix/free-llm-ollama.md` + `notebooks/99_free_llm_ollama.ipynb`** — OpenAI 비용 부담 완화용 부록. Colab에서 Ollama(Qwen3) 띄우기 / Groq 무료 Tier / LlamaIndex·LangChain·Vanna LLM 초기화 교체 레시피. mkdocs nav · `setup.md` · `colab-links.js` 등록 완료.
 
