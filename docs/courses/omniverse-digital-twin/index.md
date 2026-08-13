@@ -21,8 +21,11 @@ title: Omniverse 디지털트윈 기초
 </div>
 
 !!! warning "개설 준비 중입니다"
-    커리큘럼과 실습 자산은 완성되었으나 개강 일정이 확정되지 않았습니다.
-    이 페이지의 내용은 개강 전 최종 검증 과정에서 일부 조정될 수 있습니다.
+    **강의 내용과 실습 자산은 모두 공개되어 있습니다.** 개강 일정만 미정입니다.
+    수강 전에 미리 읽어 보셔도 좋고, 혼자 실습해 보셔도 됩니다.
+
+    13H(OmniGraph) 의 UI 절차는 Omniverse 버전에 따라 달라질 수 있어
+    개강 전 최종 확인 중입니다.
 
 ---
 
@@ -112,6 +115,14 @@ graph LR
     16시간을 시간 단위로 어떻게 쓰는지 확인하세요.
 
     [:octicons-arrow-right-24: 커리큘럼 보기](curriculum.md)
+
+-   :material-book-open-variant:{ .lg .middle } **강의 내용**
+
+    ---
+
+    시간별 상세 페이지가 공개되어 있습니다.
+
+    [:octicons-arrow-right-24: Day 1 시작하기](day1/index.md)
 
 -   :material-cog-outline:{ .lg .middle } **사전 준비**
 

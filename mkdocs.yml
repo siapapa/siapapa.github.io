@@ -184,6 +184,26 @@ nav:
     - 커리큘럼: courses/omniverse-digital-twin/curriculum.md
     - 사전 준비: courses/omniverse-digital-twin/setup.md
     - 실습 자산: courses/omniverse-digital-twin/labs.md
+    - "Day 1":
+      - courses/omniverse-digital-twin/day1/index.md
+      - "01H. OT & 완성 데모": courses/omniverse-digital-twin/day1/01-ot-demo.md
+      - "02H. Omniverse 아키텍처": courses/omniverse-digital-twin/day1/02-architecture.md
+      - "03H. OpenUSD I — 씬은 파일이다": courses/omniverse-digital-twin/day1/03-usd-basics.md
+      - "04H. OpenUSD II — Composition": courses/omniverse-digital-twin/day1/04-usd-composition.md
+      - "05H. Kit 앱 셋업": courses/omniverse-digital-twin/day1/05-kit-setup.md
+      - "06H. 씬 조립": courses/omniverse-digital-twin/day1/06-scene-assembly.md
+      - "07H. Python 스크립팅": courses/omniverse-digital-twin/day1/07-scripting.md
+      - "08H. 프로젝트 브리핑": courses/omniverse-digital-twin/day1/08-project-briefing.md
+    - "Day 2":
+      - courses/omniverse-digital-twin/day2/index.md
+      - "09H. SimReady 에셋": courses/omniverse-digital-twin/day2/09-simready.md
+      - "10H. 물리 시뮬레이션": courses/omniverse-digital-twin/day2/10-physics.md
+      - "11H. 실시간 데이터 I — 스키마": courses/omniverse-digital-twin/day2/11-data-schema.md
+      - "12H. 실시간 데이터 II — 바인딩": courses/omniverse-digital-twin/day2/12-live-binding.md
+      - "13H. OmniGraph": courses/omniverse-digital-twin/day2/13-omnigraph.md
+      - "14H. 상태 시각화": courses/omniverse-digital-twin/day2/14-visualization.md
+      - "15H. 운영 시나리오": courses/omniverse-digital-twin/day2/15-scenarios.md
+      - "16H. 최종 발표 & 수료": courses/omniverse-digital-twin/day2/16-final-presentation.md
 
   - "Isaac Sim 로보틱스 (24H)":
     - courses/isaac-sim-robotics/index.md
