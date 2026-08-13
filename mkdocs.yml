@@ -210,4 +210,34 @@ nav:
     - 커리큘럼: courses/isaac-sim-robotics/curriculum.md
     - 사전 준비: courses/isaac-sim-robotics/setup.md
     - 실습 자산: courses/isaac-sim-robotics/labs.md
+    - "Day 1":
+      - courses/isaac-sim-robotics/day1/index.md
+      - "01H. OT · 데모 · USD 복습": courses/isaac-sim-robotics/day1/01-ot-usd-review.md
+      - "02H. 시뮬레이션 루프": courses/isaac-sim-robotics/day1/02-simulation-loop.md
+      - "03H. 로봇 임포트": courses/isaac-sim-robotics/day1/03-robot-import.md
+      - "04H. 로봇 제어": courses/isaac-sim-robotics/day1/04-robot-control.md
+      - "05H. 카메라 센서": courses/isaac-sim-robotics/day1/05-camera.md
+      - "06H. LiDAR · IMU": courses/isaac-sim-robotics/day1/06-lidar-imu.md
+      - "07H. Replicator": courses/isaac-sim-robotics/day1/07-replicator.md
+      - "08H. 데이터셋 생성·검수": courses/isaac-sim-robotics/day1/08-dataset.md
+    - "Day 2":
+      - courses/isaac-sim-robotics/day2/index.md
+      - "09H. Isaac Lab 구조": courses/isaac-sim-robotics/day2/09-isaaclab-structure.md
+      - "10H. 환경 정의 I — 씬": courses/isaac-sim-robotics/day2/10-env-scene.md
+      - "11H. 환경 정의 II — 관측·행동": courses/isaac-sim-robotics/day2/11-env-obs-action.md
+      - "12H. 보상·종료 설계": courses/isaac-sim-robotics/day2/12-reward-design.md
+      - "13H. 학습 실행": courses/isaac-sim-robotics/day2/13-training.md
+      - "14H. 학습 곡선 진단": courses/isaac-sim-robotics/day2/14-diagnosis.md
+      - "15H. 정책 평가": courses/isaac-sim-robotics/day2/15-evaluation.md
+      - "16H. 커스텀 태스크": courses/isaac-sim-robotics/day2/16-custom-task.md
+    - "Day 3":
+      - courses/isaac-sim-robotics/day3/index.md
+      - "17H. sim-to-real 갭": courses/isaac-sim-robotics/day3/17-sim2real.md
+      - "18H. 합성데이터로 모델 학습": courses/isaac-sim-robotics/day3/18-train-vision.md
+      - "19H. 갭 측정과 배포 판정": courses/isaac-sim-robotics/day3/19-measure-gap.md
+      - "20H. 시뮬 결과 → DB": courses/isaac-sim-robotics/day3/20-sim-to-db.md
+      - "21H. 자연어 질의": courses/isaac-sim-robotics/day3/21-nl-query.md
+      - "22H. Kit 확장 개발": courses/isaac-sim-robotics/day3/22-kit-extension.md
+      - "23H. 최종 튜닝": courses/isaac-sim-robotics/day3/23-final-tuning.md
+      - "24H. 최종 발표 & 수료": courses/isaac-sim-robotics/day3/24-presentation.md
 

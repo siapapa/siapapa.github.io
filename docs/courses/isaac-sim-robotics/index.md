@@ -19,9 +19,18 @@ title: Isaac Sim 로보틱스 & AI 연계
 
 </div>
 
-!!! warning "개설 준비 중입니다"
-    커리큘럼과 실습 자산은 완성되었으나 개강 일정이 확정되지 않았습니다.
-    Isaac Sim 은 버전 변화가 빨라, 개강 전 최종 검증에서 일부 내용이 조정될 수 있습니다.
+!!! warning "개설 준비 중 · 일부 내용은 최종 검증 전입니다"
+    **강의 내용과 실습 자산은 모두 공개되어 있습니다.** 개강 일정만 미정입니다.
+
+    다만 **Isaac Sim / Isaac Lab 실행이 필요한 실습은 아직 검증 전**입니다.
+    코드는 공식 문서 기준으로 작성했고 문법 검사는 통과했으나,
+    버전에 따라 API 이름이 다를 수 있습니다. 각 시간 페이지 상단에
+    검증 상태를 표시해 두었습니다.
+
+    | 표시 | 뜻 |
+    |---|---|
+    | ✅ | 실행 검증 완료 (GPU 불필요 구간) |
+    | ⬜ | 최종 검증 전 |
 
 !!! danger "등록 전 GPU 사양을 반드시 확인하세요"
     이 과정은 **RTX 4080 (16GB VRAM) 이상**이 필요합니다.
@@ -107,6 +116,14 @@ graph LR
     24시간 · 3일을 시간 단위로.
 
     [:octicons-arrow-right-24: 커리큘럼 보기](curriculum.md)
+
+-   :material-book-open-variant:{ .lg .middle } **강의 내용**
+
+    ---
+
+    시간별 상세 페이지가 공개되어 있습니다.
+
+    [:octicons-arrow-right-24: Day 1 시작하기](day1/index.md)
 
 -   :material-alert-circle-outline:{ .lg .middle } **사전 준비**
 
